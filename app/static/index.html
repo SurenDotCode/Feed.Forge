@@ -103,8 +103,34 @@ pre{background:#FAFAF8;border:1px solid var(--line);border-radius:8px;padding:12
 .empty h3{margin:8px 0 6px;font-size:20px}.empty p{margin:0 auto;color:var(--mu);max-width:44ch}
 footer{color:var(--mu);font-size:12px;padding:24px 0 48px}
 
+/* compact (queued / running / failed) cards */
+.job.compact{grid-template-columns:150px 1fr;align-items:start}
+.job.compact .frame{aspect-ratio:auto;height:104px}
+.job.compact .stats{margin-bottom:0}
+.job.failed{border-top-color:var(--bad)}
+.pill.unknown{color:var(--mu)}
+.net{position:sticky;top:0;z-index:20;background:var(--bad);color:#fff;text-align:center;font-weight:600;font-size:14px;padding:10px 16px}
+/* skeleton (pulse, no gradient) */
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+.skel{animation:pulse 1.4s ease-in-out infinite}
+.skl{margin:14px 0 0;display:grid;gap:8px}
+.skl i{display:block;height:10px;border-radius:5px;background:#E4E3DF}.skl i:last-child{width:60%}
+/* publish pack */
+.pack{border:1px solid var(--line);border-radius:10px;padding:4px 14px;background:#FCFBF9}
+.prow{padding:10px 0;border-bottom:1px solid var(--line)}
+.prow:last-of-type{border-bottom:0}
+.prow-h{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.prow p{margin:4px 0 0;word-break:break-word}
+/* empty state */
+.ex{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:18px}
+/* gallery */
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.gal .card{padding:12px;margin:0;display:flex;flex-direction:column;gap:8px}
+.gal video{width:100%;aspect-ratio:9/16;object-fit:cover;border-radius:8px;background:#000;display:block}
+.gal h4{margin:0;font-size:14px;line-height:1.3;word-break:break-word}
 @media(max-width:760px){
  .wrap{padding:0 16px}
+ .job.compact{grid-template-columns:1fr}
  .hero{padding:36px 0 20px}
  .card,.pipe{padding:18px}
  .steps{grid-template-columns:repeat(2,1fr)}
@@ -114,8 +140,9 @@ footer{color:var(--mu);font-size:12px;padding:24px 0 48px}
  .row .narrow{flex:1 1 100%}
  .actions .btn:not(.text){flex:1 1 auto}
 }
-@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 </style></head><body>
+<div class="net" id="net" role="alert" hidden>Can't reach the server. Retrying...</div>
 <header class="top"><div class="wrap">
  <div class="wordmark" aria-label="FeedForge">FEEDFORGE</div>
  <div class="label">CTRL FREAK 2026 · QONEQT · TEAM OPTIMUS</div>
@@ -161,6 +188,11 @@ footer{color:var(--mu);font-size:12px;padding:24px 0 48px}
  <div class="section-head"><div class="label" id="jobs-h">03 · Jobs</div><small class="meta" id="count" style="margin:0"></small></div>
  <div id="jobs" aria-live="polite"></div>
 </section>
+
+<section id="gal" aria-labelledby="gal-h" hidden style="margin-top:12px">
+ <div class="section-head"><div class="label" id="gal-h">04 · Demo gallery</div></div>
+ <div class="gal" id="galGrid"></div>
+</section>
 <footer>FeedForge · Team Optimus · CTRL FREAK 2026</footer>
 </main>
 
@@ -174,20 +206,38 @@ async function one(){const t=$('topic').value.trim();if(t.length<3){say('Enter a
 async function batch(){const ts=$('topics').value.split('\n').map(x=>x.trim()).filter(x=>x.length>=3);
  if(!ts.length){say('Add at least one topic (3+ characters) per line.');return}say('');
  await fetch('/api/batch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({topics:ts})});load()}
-let CACHE={};
-function cp(id,btn){const p=CACHE[id];navigator.clipboard.writeText(p.caption+'\n'+(p.hashtags||[]).join(' ')).then(()=>{if(btn){const o=btn.textContent;btn.textContent='Copied';setTimeout(()=>btn.textContent=o,1400)}})}
+let CACHE={},OFFLINE=false,LAST=[],FIRST={};
+try{FIRST=JSON.parse(localStorage.getItem('ff_first')||'{}')}catch(e){}
+function copyText(t,btn){const done=()=>{if(!btn)return;if(!btn.dataset.o)btn.dataset.o=btn.textContent;btn.textContent='Copied';clearTimeout(btn._t);btn._t=setTimeout(()=>{btn.textContent=btn.dataset.o;delete btn.dataset.o},1500)};
+ const fb=()=>{const a=document.createElement('textarea');a.value=t;a.style.cssText='position:fixed;opacity:0';document.body.appendChild(a);a.select();try{if(document.execCommand('copy'))done()}catch(e){}a.remove()};
+ navigator.clipboard?navigator.clipboard.writeText(t).then(done,fb):fb()}
+document.addEventListener('click',e=>{
+ const c=e.target.closest('[data-copy]');
+ if(c){const p=CACHE[c.dataset.id];if(!p)return;const tg=(p.hashtags||[]).join(' '),k=c.dataset.copy;
+  copyText(k==='all'?[p.title,p.caption,tg].filter(Boolean).join('\n\n'):k==='tags'?tg:(p[k]||''),c);return}
+ const x=e.target.closest('[data-topic]');if(x){$('topic').value=x.dataset.topic;$('topic').focus();return}
+ const g=e.target.closest('[data-goto]');
+ if(g){const n=NODES[g.dataset.goto];if(n){n.el.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth',block:'start'});n.el.tabIndex=-1;n.el.focus({preventScroll:true})}}});
+function made(j){let v=j.created_at??j.created;
+ if(v!=null){const d=typeof v==='number'?new Date(v<1e12?v*1000:v):new Date(v);if(!isNaN(d))return d}
+ if(!FIRST[j.id]){FIRST[j.id]=Date.now()-(+j.elapsed_s||0)*1000;try{localStorage.setItem('ff_first',JSON.stringify(FIRST))}catch(e){}}
+ return new Date(FIRST[j.id])}
+function when(d){const t=d.toDateString()===new Date().toDateString();
+ return d.toLocaleString([],t?{hour:'2-digit',minute:'2-digit'}:{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
 const OPEN={};const NODES={};
 function card(j){const q=j.quality,pp=j.publish_pack,deg=j.degraded_scenes&&j.degraded_scenes.length;
+ const act=!OFFLINE&&j.status==='running',stale=OFFLINE&&(j.status==='running'||j.status==='queued'),st=stale?'unknown':j.status;
  const media=j.video_url?`<video controls playsinline preload="metadata" src="${j.video_url}" aria-label="Video for ${esc(j.topic)}"></video>`
-  :`<div class="ph">${j.status==='failed'?'<b>No video</b>Generation failed':`<b>${esc(j.stage)}</b>${j.status==='queued'?'Waiting for a worker':'Working on it…'}`}</div>`;
- return `<div class="frame${j.video_url?'':' novid'}">${media}</div>
+  :`<div class="ph">${j.status==='failed'?'<b>No video</b>Generation failed':stale?'<b>Paused</b>Server unreachable':`<b>${esc(j.stage)}</b>${j.status==='queued'?'Waiting for a worker':'Working on it…'}`}</div>`;
+ const d=made(j);
+ return `<div class="frame${j.video_url?'':' novid'}${act?' skel':''}">${media}</div>
  <div>
-  <div class="label">Job ${esc(j.id)}</div>
+  <div class="label">Job ${esc(String(j.id).slice(0,6))} · <time datetime="${d.toISOString()}">${esc(when(d))}</time></div>
   <h3>${esc(j.topic)}</h3>
   <div class="pills">
-   <span class="pill ${esc(j.status)}">${esc(j.status)}</span>
+   <span class="pill ${esc(st)}">${esc(st)}</span>
    ${q?`<span class="pill ${q.passed?'pass':'fail'}">Quality gate ${q.passed?'passed':'failed'}</span>`:''}
    ${deg?`<span class="pill warn plain">Fallback scenes: ${esc(j.degraded_scenes.join(', '))}</span>`:''}
   </div>
@@ -196,33 +246,48 @@ function card(j){const q=j.quality,pp=j.publish_pack,deg=j.degraded_scenes&&j.de
    <div><dt>Elapsed</dt><dd>${esc(j.elapsed_s)}s</dd></div>
    <div><dt>Est. cost</dt><dd>$${esc(j.est_cost_usd)}</dd></div>
   </dl>
-  ${j.error?`<div class="err" role="alert"><strong>Job failed</strong><p>${esc(j.error)}</p></div>`:''}
-  ${pp?`<div class="pack"><div class="label">Caption</div><p class="ttl">${esc(pp.title)}</p><p class="cap">${esc(pp.caption)}</p><p class="tags">${esc((pp.hashtags||[]).join(' '))}</p></div>
-  <div class="actions"><a class="btn" href="${j.video_url}" download>Download MP4</a><button class="btn ghost" onclick="cp('${esc(j.id)}',this)">Copy caption</button></div>`:''}
+  ${act?'<div class="skl skel" aria-hidden="true"><i></i><i></i></div>':''}
+  ${j.error||j.status==='failed'?`<div class="err" role="alert"><strong>Job failed</strong><p>${esc(j.error||'No error details were returned.')}</p></div>`:''}
+  ${pp?`<div class="pack">
+   <div class="prow"><div class="prow-h"><div class="label">Title</div><button class="btn ghost sm" data-copy="title" data-id="${esc(j.id)}">Copy</button></div><p class="ttl">${esc(pp.title)}</p></div>
+   <div class="prow"><div class="prow-h"><div class="label">Caption</div><button class="btn ghost sm" data-copy="caption" data-id="${esc(j.id)}">Copy</button></div><p class="cap">${esc(pp.caption)}</p></div>
+   <div class="prow"><div class="prow-h"><div class="label">Hashtags</div><button class="btn ghost sm" data-copy="tags" data-id="${esc(j.id)}">Copy</button></div><p class="tags">${esc((pp.hashtags||[]).join(' '))}</p></div>
+  </div>
+  <div class="actions">${j.video_url?`<a class="btn" href="${esc(j.video_url)}" download>Download MP4</a>`:''}<button class="btn ghost" data-copy="all" data-id="${esc(j.id)}">Copy all</button></div>`:''}
   <details data-id="${esc(j.id)}" ${OPEN[j.id]?'open':''} ontoggle="OPEN[this.dataset.id]=this.open;if(this.open){const p=this.querySelector('pre');p.scrollTop=p.scrollHeight}">
    <summary>Show pipeline log (${(j.logs||[]).length})</summary><pre>${esc((j.logs||[]).join('\n'))}</pre>
   </details>
  </div>`}
 
-function pipeline(jobs){const a=jobs.find(j=>j.status==='running')||jobs.find(j=>j.status==='queued')||jobs[0];
+function pipeline(jobs){if(OFFLINE){document.querySelectorAll('#steps .step').forEach(el=>{el.className='step';el.removeAttribute('aria-current')});$('pipeNow').textContent='Server unreachable';return}
+ const a=jobs.find(j=>j.status==='running')||jobs.find(j=>j.status==='queued')||jobs[0];
  const idx=a?STAGES.indexOf(a.stage):-1;
  document.querySelectorAll('#steps .step').forEach((el,i)=>{el.className='step';el.removeAttribute('aria-current');if(!a)return;
   if(a.status==='done'||i<idx)el.classList.add('complete');
   else if(i===idx){el.classList.add(a.status==='failed'?'failed':'current');el.setAttribute('aria-current','step')}});
  $('pipeNow').innerHTML=a?`Tracking <b>${esc(a.topic)}</b> · ${esc(a.status)}`:'No active job'}
 
-async function load(){const r=await (await fetch('/api/jobs')).json();const jobs=r.jobs;
+async function load(){let jobs;
+ try{const res=await fetch('/api/jobs');if(!res.ok)throw 0;jobs=(await res.json()).jobs;if(!Array.isArray(jobs))throw 0;OFFLINE=false;LAST=jobs}
+ catch(e){OFFLINE=true;jobs=LAST}
+ $('net').hidden=!OFFLINE;
+ render(jobs)}
+function gallery(jobs){const d=jobs.filter(j=>j.status==='done'&&j.video_url).slice(0,6),g=$('gal'),sig=JSON.stringify(d.map(j=>[j.id,j.video_url,j.topic]));
+ g.hidden=!d.length;if(g.dataset.sig===sig)return;g.dataset.sig=sig;
+ $('galGrid').innerHTML=d.map(j=>`<article class="card"><video muted playsinline preload="metadata" tabindex="-1" aria-hidden="true" src="${esc(j.video_url)}#t=0.1"></video><h4>${esc((j.publish_pack&&j.publish_pack.title)||j.topic)}</h4><button class="btn ghost sm" data-goto="${esc(j.id)}" aria-label="Play ${esc(j.topic)}">Play</button></article>`).join('')}
+function render(jobs){
  jobs.forEach(j=>{if(j.publish_pack)CACHE[j.id]=j.publish_pack});
  pipeline(jobs);
  $('count').textContent=jobs.length?`${jobs.length} job${jobs.length>1?'s':''}`:'';
  const box=$('jobs');
+ gallery(jobs);
  if(!jobs.length){for(const k in NODES)delete NODES[k];
-  box.innerHTML=`<div class="card empty"><div class="label">No jobs yet</div><h3>Your videos will appear here</h3><p>Enter a topic above and press Generate, or queue several at once with Batch mode.</p></div>`;return}
+  if(!box.querySelector('.empty'))box.innerHTML=`<div class="card empty"><div class="label">No jobs yet</div><h3>Your videos will appear here</h3><p>Pick an example to start, or type your own topic above and press Generate.</p><div class="ex">${['5 study habits that actually work','Why the moon looks bigger at the horizon','3 budgeting tips for first jobs'].map(t=>`<button class="btn ghost sm" data-topic="${esc(t)}">${esc(t)}</button>`).join('')}</div></div>`;return}
  box.querySelector('.empty')?.remove();
  const seen=new Set();
- jobs.forEach((j,i)=>{seen.add(j.id);const sig=JSON.stringify(j);let n=NODES[j.id];
-  if(!n){const el=document.createElement('article');el.className='card job';n=NODES[j.id]={el,sig:''}}
-  if(n.sig!==sig){n.el.innerHTML=card(j);n.sig=sig}   // only re-render cards that changed, so playing videos are not reset
+ jobs.forEach((j,i)=>{seen.add(j.id);const sig=JSON.stringify(j)+OFFLINE;let n=NODES[j.id];
+  if(!n){const el=document.createElement('article');n=NODES[j.id]={el,sig:''};el.dataset.id=j.id}
+  if(n.sig!==sig){n.el.className='card job'+(j.video_url?'':' compact')+(j.status==='failed'?' failed':'');n.el.innerHTML=card(j);n.sig=sig}   // only re-render cards that changed, so playing videos are not reset
   if(box.children[i]!==n.el)box.insertBefore(n.el,box.children[i]||null)});
  for(const k in NODES)if(!seen.has(k)){NODES[k].el.remove();delete NODES[k]}}
 
