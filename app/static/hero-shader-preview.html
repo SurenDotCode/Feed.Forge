@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FeedForge hero preview</title>
+<style>
+  :root{--ink:#1a1a1a;--cream:#f7f6f3;--gold:#a68b5b;--goldtext:#c4a874}
+  *{box-sizing:border-box}html,body{margin:0}body{background:var(--ink);color:#fff;font-family:Inter,Helvetica,Arial,sans-serif}
+  #hero{position:relative;min-height:100svh;overflow:hidden;background:var(--ink);display:flex;align-items:center}
+  .col{position:relative;z-index:2;max-width:600px;padding:0 6vw;pointer-events:none}
+  .col a,.col button{pointer-events:auto}
+  .label{color:var(--goldtext);font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+  h1{font-size:clamp(40px,6vw,76px);line-height:1.02;margin:14px 0 18px;letter-spacing:-.02em}
+  p{color:#d8d4cb;font-size:18px;line-height:1.55;margin:0 0 28px}
+  .btn{display:inline-block;background:var(--gold);color:#111;font-weight:700;padding:14px 22px;border-radius:8px;text-decoration:none;margin-right:10px}
+  .btn.o{background:transparent;color:#fff;border:1px solid #ffffff55}
+</style></head>
+<body>
+<section id="hero">
+  <div class="col">
+    <div class="label">Qoneqt Global Feed · AI Video Pipeline</div>
+    <h1>One topic in. One publish-ready video out.</h1>
+    <p>Type an idea and get a scripted, voiced, validated vertical video with caption and hashtags, ready to post.</p>
+    <a class="btn" href="/">Start creating</a><a class="btn o" href="#how">See how it works</a>
+  </div>
+</section>
+<section style="height:80vh;background:#f7f6f3;color:#1a1a1a;padding:60px 6vw" id="how"><h2>Preview only: scroll test area</h2></section>
+<script type="module">
+  import { mountHero } from '/static/hero-shader.js';
+  const h = await mountHero(document.getElementById('hero'));
+  console.log('hero3d ok:', h.ok);
+</script>
+</body></html>

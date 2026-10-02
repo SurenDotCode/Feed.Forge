@@ -140,15 +140,154 @@ footer{color:var(--mu);font-size:12px;padding:24px 0 48px}
  .row .narrow{flex:1 1 100%}
  .actions .btn:not(.text){flex:1 1 auto}
 }
+/* landing (lp-*) */
+html{scroll-behavior:smooth}
+#app,#how,#jobs-h{scroll-margin-top:72px}
+.skip{position:absolute;left:12px;top:-60px;z-index:50;background:#fff;color:var(--ink);padding:10px 16px;border-radius:8px;font-weight:600;text-decoration:none}
+.skip:focus{top:12px}
+/* pill nav */
+.pn{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:30;max-width:calc(100% - 24px);display:flex;align-items:center;gap:6px;padding:6px 6px 6px 18px;border-radius:999px;background:rgba(26,26,26,.85);border:1px solid rgba(255,255,255,.12);transition:background-color .25s cubic-bezier(.22,1,.36,1)}
+.pn.solid{background:rgba(26,26,26,.96)}
+@supports((backdrop-filter:blur(10px)) or (-webkit-backdrop-filter:blur(10px))){.pn{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}}
+.pn-mark{color:#fff;font-weight:800;letter-spacing:.18em;font-size:14px;text-decoration:none;margin-right:12px;border-radius:999px}
+.pn-links{position:relative;display:flex;gap:2px}
+.pn-links a{position:relative;z-index:1;color:#E4E4E1;font-size:14px;font-weight:500;text-decoration:none;padding:8px 14px;border-radius:999px;transition:color .2s}
+.pn-links a:hover,.pn-links a:focus-visible,.pn-links a[aria-current="true"]{color:#fff}
+.pn-hl{position:absolute;top:0;left:0;height:100%;width:var(--w,0px);transform:translateX(var(--x,0px));background:rgba(247,246,243,.14);border-radius:999px;opacity:0;pointer-events:none;transition:transform .35s cubic-bezier(.22,1,.36,1),width .35s cubic-bezier(.22,1,.36,1),opacity .2s}
+.pn-cta{background:var(--gold);color:#000;font-size:14px;font-weight:600;text-decoration:none;padding:8px 16px;border-radius:999px;margin-left:4px;transition:background-color .2s}
+.pn-cta:hover{background:#B8A06F}
+.pn-ico,.pn-menu{width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:50%;background:transparent;color:#E4E4E1;cursor:pointer;padding:0;transition:background-color .2s,opacity .2s}
+.pn-ico:hover,.pn-menu:hover{background:rgba(247,246,243,.14)}
+.pn-ico[aria-pressed="false"]{opacity:.55}
+.pn-menu{display:none}
+.pn :focus-visible,#hero :focus-visible,.lp-cta :focus-visible{outline-color:#fff}
+.lp-btn{display:inline-flex;align-items:center;justify-content:center;background:var(--gold);color:#000;border:1px solid var(--gold);border-radius:8px;padding:12px 22px;font:inherit;font-weight:600;text-decoration:none;transition:background .15s,border-color .15s}
+.lp-btn:hover{background:#B8A06F;border-color:#B8A06F}
+.lp-btn.ghost{background:transparent;color:#fff;border-color:#8A8A87}
+.lp-btn.ghost:hover{border-color:var(--gold);background:transparent;color:var(--gold)}
+.lp-btn.sm{padding:8px 14px;font-size:14px}
+.lp-in{max-width:1180px;margin:0 auto;padding:0 24px;width:100%;position:relative;z-index:2}
+.lp-copy{max-width:600px;text-align:left;pointer-events:none}
+.lp-copy a,.lp-copy button{pointer-events:auto}
+#hero{position:relative;overflow:hidden;background:var(--ink);color:#fff;min-height:100vh;min-height:100svh;display:flex;align-items:center;padding:88px 0 40px}
+.lp-lab{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+.lp-h1{margin:14px 0 16px;font-size:clamp(34px,5.4vw,62px);line-height:1.04;letter-spacing:-.025em;font-weight:800;text-wrap:balance}
+.lp-sub{margin:0 0 28px;color:#D0D0CD;font-size:18px;max-width:46ch}
+.lp-cta-row{display:flex;gap:12px;flex-wrap:wrap}
+.lp-sec{padding:72px 0 0}
+.lp-sec .wrap{padding-top:0}
+.lp-h2{margin:8px 0 28px;font-size:clamp(26px,3.6vw,38px);line-height:1.1;letter-spacing:-.02em;font-weight:800;max-width:24ch;text-wrap:balance}
+.lp-grid{display:grid;gap:20px;grid-template-columns:repeat(4,1fr);list-style:none;margin:0;padding:0}
+.lp-grid.g3{grid-template-columns:repeat(3,1fr)}
+.lp-grid .card{margin:0;height:100%}
+.lp-grid .card h3{margin:6px 0 8px;font-size:18px;letter-spacing:-.01em}
+.lp-grid .card p{margin:0;color:var(--mu);font-size:15px}
+.lp-cta{background:var(--ink);color:#fff;border-radius:12px;padding:40px 32px;margin:72px 0;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+.lp-cta h2{margin:0 0 6px;font-size:clamp(24px,3.2vw,34px);letter-spacing:-.02em}
+.lp-cta p{margin:0;color:#D0D0CD}
+.js .rv{opacity:0;transform:translateY(16px);transition:opacity .4s ease,transform .4s ease}
+.js .rv.in{opacity:1;transform:none}
+@media(max-width:900px){.lp-grid{grid-template-columns:repeat(2,1fr)}.lp-grid.g3{grid-template-columns:1fr}}
+@media(max-width:760px){
+ .lp-in{padding:0 16px}
+ #hero{padding:80px 0 32px}
+ .lp-cta{padding:28px 20px}
+}
+@media(max-width:520px){.lp-grid{grid-template-columns:1fr}}
+@media(max-width:700px){
+ .pn{width:calc(100% - 24px);max-width:360px;justify-content:space-between;padding-left:16px}
+ .pn-mark{margin-right:auto}
+ .pn-menu{display:inline-flex}
+ .pn-cta,.pn-hl{display:none}
+ .pn-links{position:absolute;top:calc(100% + 8px);left:0;right:0;flex-direction:column;gap:0;padding:8px;border-radius:24px;background:rgba(26,26,26,.96);border:1px solid rgba(255,255,255,.12);transition:opacity .25s cubic-bezier(.22,1,.36,1),transform .25s cubic-bezier(.22,1,.36,1),visibility .25s}
+ .pn-links a{padding:12px 16px}
+ .pn-links a[aria-current="true"]{background:rgba(247,246,243,.14)}
+ .pn:not(.open) .pn-links{opacity:0;transform:translateY(-8px);visibility:hidden;pointer-events:none}
+}
+/* gooey controls (goo only on decorative blob layers) */
+.vh{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0!important}
+.row .narrow.scn{flex:0 1 250px}
+.seg{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:4px;background:#fff;border:1px solid #CFCFCB;border-radius:8px}
+.seg-goo{position:absolute;inset:0;filter:url(#goo);pointer-events:none;--i:0}
+.seg-blob{position:absolute;top:4px;left:4px;height:calc(100% - 8px);width:calc((100% - 20px)/4);background:var(--gold);border-radius:8px;transform:translateX(calc(var(--i)*(100% + 4px)));transition:transform .45s cubic-bezier(.22,1,.36,1)}
+.seg-blob+.seg-blob{transition-duration:.39s;transition-delay:.06s}
+.seg [role=radio]{position:relative;z-index:1;background:transparent;border:0;border-radius:6px;padding:7px 4px;font:inherit;font-weight:600;color:var(--ink);cursor:pointer}
+.seg [role=radio][aria-checked="true"]{color:#000}
+.seg [role=radio]:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.gen{position:relative;isolation:isolate;overflow:visible}
+.gen-goo{position:absolute;inset:0;z-index:-1;filter:url(#goo);pointer-events:none}
+.gen-base{position:absolute;inset:0;border-radius:8px;background:var(--gold);opacity:0;transition:transform .35s cubic-bezier(.22,1,.36,1),opacity .2s}
+.gen:hover:not(:disabled) .gen-base,.gen:focus-visible .gen-base{opacity:1;transform:scale(1.05,1.16)}
+.gen-b{position:absolute;border-radius:50%;background:var(--gold)}
+.gen-lb{position:relative}
+.lp-sec,footer{content-visibility:auto;contain-intrinsic-size:auto 480px}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
-</style></head><body>
+</style><script>document.documentElement.classList.add('js')</script></head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><filter id="goo" x="-50%" y="-150%" width="200%" height="400%"><feGaussianBlur in="SourceGraphic" stdDeviation="8" result="b"/><feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="g"/><feComposite in="SourceGraphic" in2="g" operator="atop"/></filter></defs></svg>
+<a class="skip" href="#app">Skip to app</a>
 <div class="net" id="net" role="alert" hidden>Can't reach the server. Retrying...</div>
+
+<nav class="pn" id="lpNav" aria-label="Primary">
+ <a class="pn-mark" href="#hero">FEEDFORGE</a>
+ <div class="pn-links" id="pnLinks"><span class="pn-hl" aria-hidden="true"></span><a href="#how">How it works</a><a href="#app">Create</a><a href="#jobs-h">Jobs</a></div>
+ <a class="pn-cta" href="#app">Start creating</a>
+ <button class="pn-ico" id="bgToggle" type="button" aria-pressed="false" aria-label="Toggle animated background" title="Toggle animated background"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="3"/><circle cx="8" cy="8" r="6.5" stroke-dasharray="2 2.6"/></svg></button>
+ <button class="pn-menu" id="pnMenu" type="button" aria-expanded="false" aria-controls="pnLinks" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M2 4.5h12M2 8h12M2 11.5h12"/></svg></button>
+</nav>
+
+<section id="hero" aria-labelledby="lp-h1"><div class="lp-in">
+ <div class="lp-copy">
+  <div class="lp-lab">QONEQT GLOBAL FEED · AI VIDEO PIPELINE</div>
+  <h1 class="lp-h1" id="lp-h1">One topic in. One publish-ready video out.</h1>
+  <p class="lp-sub">Type an idea and get a scripted, voiced, validated vertical video with caption and hashtags, ready to post.</p>
+  <div class="lp-cta-row"><a class="lp-btn" href="#app">Start creating</a><a class="lp-btn ghost" href="#how">See how it works</a></div>
+ </div>
+</div></section>
+
+<section class="lp-sec" id="how" aria-labelledby="how-h"><div class="wrap">
+ <div class="label rv">How it works</div>
+ <h2 class="lp-h2 rv" id="how-h">Four steps from topic to finished video</h2>
+ <ol class="lp-grid">
+  <li class="card rv"><div class="label">01</div><h3>Script</h3><p>An LLM writes the hook, the full script and a structured scene plan.</p></li>
+  <li class="card rv"><div class="label">02</div><h3>Generate</h3><p>Visuals and voiceover are produced for each scene.</p></li>
+  <li class="card rv"><div class="label">03</div><h3>Compose</h3><p>Scenes, audio and captions become a 9:16 MP4.</p></li>
+  <li class="card rv"><div class="label">04</div><h3>Validate</h3><p>Automated checks on format, duration and completeness.</p></li>
+ </ol>
+</div></section>
+
+<section class="lp-sec" aria-labelledby="why-h"><div class="wrap">
+ <div class="label rv">Why FeedForge</div>
+ <h2 class="lp-h2 rv" id="why-h">Feeds need videos. Videos take time.</h2>
+ <div class="lp-grid g3">
+  <article class="card rv"><h3>Creators</h3><p>Scripting, visuals, editing and captions take hours per video.</p></article>
+  <article class="card rv"><h3>Platform</h3><p>New and niche communities often start with thin or empty feeds.</p></article>
+  <article class="card rv"><h3>Users</h3><p>Sparse feeds weaken discovery and engagement.</p></article>
+ </div>
+</div></section>
+
+<section class="lp-sec" aria-labelledby="feat-h"><div class="wrap">
+ <div class="label rv">Features</div>
+ <h2 class="lp-h2 rv" id="feat-h">Built to ship a video, not a draft</h2>
+ <div class="lp-grid g3">
+  <article class="card rv"><h3>Structured story engine</h3><p>Every video starts from a hook, a full script and a scene-by-scene plan.</p></article>
+  <article class="card rv"><h3>Resilient generation</h3><p>When a scene cannot be generated, a fallback keeps the video moving.</p></article>
+  <article class="card rv"><h3>Auto-synced captions</h3><p>Captions are generated with the voiceover and composed into the final video.</p></article>
+  <article class="card rv"><h3>Quality gate</h3><p>Automated checks run before a video is marked as passed.</p></article>
+  <article class="card rv"><h3>Batch mode</h3><p>Queue several topics at once and let the workers run through them.</p></article>
+ </div>
+</div></section>
+
+<div class="wrap"><section class="lp-cta rv" aria-labelledby="cta-h">
+ <div><h2 id="cta-h">Ready when you are.</h2><p>Type a topic and get a publish-ready video.</p></div>
+ <a class="lp-btn" href="#app">Make your first video</a>
+</section></div>
+
 <header class="top"><div class="wrap">
  <div class="wordmark" aria-label="FeedForge">FEEDFORGE</div>
  <div class="label">CTRL FREAK 2026 · QONEQT · TEAM OPTIMUS</div>
 </div></header>
 
-<main class="wrap">
+<main class="wrap" id="app">
 <section class="hero">
  <div class="label">Qoneqt Global Feed · 9:16 video pipeline</div>
  <h1>One topic in. One publish-ready video out.</h1>
@@ -160,10 +299,14 @@ footer{color:var(--mu);font-size:12px;padding:24px 0 48px}
  <h2 id="gen-h">Generate a video</h2>
  <div class="row">
   <div class="field grow"><label for="topic">Topic</label><input id="topic" placeholder="Topic, idea or trend (e.g. 5 study habits that actually work)" onkeydown="if(event.key==='Enter')one()"></div>
-  <div class="field narrow"><label for="scenes">Scenes</label><select id="scenes"><option value="">Auto</option><option>4</option><option>5</option><option>6</option></select></div>
+  <div class="field narrow scn"><label for="scenes">Scenes</label>
+   <div class="seg" id="segScenes" role="radiogroup" aria-label="Scenes"><span class="seg-goo" aria-hidden="true"><i class="seg-blob"></i><i class="seg-blob"></i></span>
+    <button type="button" role="radio" aria-checked="true" tabindex="0" data-v="">Auto</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-v="4">4</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-v="5">5</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-v="6">6</button>
+   </div>
+   <select id="scenes" class="vh" tabindex="-1" aria-hidden="true"><option value="">Auto</option><option>4</option><option>5</option><option>6</option></select></div>
  </div>
  <div class="actions">
-  <button class="btn" onclick="one()">Generate</button>
+  <button class="btn gen" onclick="one()"><span class="gen-goo" aria-hidden="true"><i class="gen-base"></i></span><span class="gen-lb">Generate</span></button>
   <button class="btn text" id="btToggle" aria-expanded="false" aria-controls="bt" onclick="toggleBatch()">Batch mode</button>
   <span class="msg" id="msg" role="alert"></span>
  </div>
@@ -293,4 +436,54 @@ function render(jobs){
 
 fetch('/health').then(r=>r.json()).then(h=>$('h').textContent=`LLM: ${h.llm} · images: ${h.image_provider} · workers: ${h.workers}${h.mock?' · MOCK MODE':''}`);
 load();setInterval(load,2500);
+</script>
+<script type="module">
+(()=>{
+ const $=id=>document.getElementById(id),nav=$('lpNav'),rm=matchMedia('(prefers-reduced-motion:reduce)');
+ const sc=()=>nav.classList.toggle('solid',scrollY>40);sc();addEventListener('scroll',sc,{passive:true});
+ const rv=document.querySelectorAll('.rv');
+ if('IntersectionObserver' in window){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});rv.forEach(el=>io.observe(el))}
+ else rv.forEach(el=>el.classList.add('in'));
+ /* hero shader background */
+ const hero=$('hero'),bg=$('bgToggle');let fx=null,anim=false,seq=0;
+ function mount(){const n=++seq;anim=true;bg.setAttribute('aria-pressed','true');
+  import('/static/hero-shader.js').then(m=>{const o=m.mountHero(hero);if(n===seq&&anim)fx=o;else if(o&&o.destroy)o.destroy()}).catch(()=>{})}
+ function unmount(){seq++;anim=false;bg.setAttribute('aria-pressed','false');if(fx&&fx.destroy)fx.destroy();fx=null}
+ bg.addEventListener('click',()=>anim?unmount():mount());
+ const idle=window.requestIdleCallback?(f=>requestIdleCallback(f,{timeout:300})):(f=>setTimeout(f,300));idle(mount);
+ /* pill nav */
+ const box=$('pnLinks'),hl=box.querySelector('.pn-hl'),links=[...box.querySelectorAll('a')],mb=$('pnMenu'),mob=matchMedia('(max-width:700px)');
+ const secs=links.map(a=>a.getAttribute('href')==='#jobs-h'?$('jobs-h').closest('section'):document.querySelector(a.getAttribute('href')));
+ let active=null,placed=false;
+ function place(a,instant){if(!a||mob.matches){hl.style.opacity='0';return}
+  const snap=!placed||instant;if(snap)hl.style.transition='none';
+  hl.style.setProperty('--x',a.offsetLeft+'px');hl.style.setProperty('--w',a.offsetWidth+'px');hl.style.opacity='1';
+  if(snap){void hl.offsetWidth;hl.style.transition=''}placed=true}
+ const vis=new Set();
+ function setActive(){let pick=null;for(let i=links.length-1;i>=0;i--)if(secs[i]&&vis.has(secs[i])){pick=links[i];break}
+  active=pick;links.forEach(l=>l===pick?l.setAttribute('aria-current','true'):l.removeAttribute('aria-current'));
+  if(!box.matches(':hover,:focus-within'))place(active)}
+ if('IntersectionObserver' in window){const io=new IntersectionObserver(es=>{es.forEach(e=>e.isIntersecting?vis.add(e.target):vis.delete(e.target));setActive()},{rootMargin:'-40% 0px -55% 0px'});secs.forEach(s=>s&&io.observe(s))}
+ function closeMenu(f){nav.classList.remove('open');mb.setAttribute('aria-expanded','false');if(f)mb.focus()}
+ links.forEach(a=>{a.addEventListener('pointerenter',()=>place(a));a.addEventListener('focus',()=>place(a));
+  a.addEventListener('click',e=>{const t=document.querySelector(a.getAttribute('href'));if(!t)return;e.preventDefault();t.scrollIntoView({behavior:rm.matches?'auto':'smooth',block:'start'});closeMenu()})});
+ box.addEventListener('pointerleave',()=>place(active));
+ box.addEventListener('focusout',e=>{if(!box.contains(e.relatedTarget))place(active)});
+ mb.addEventListener('click',()=>{const o=nav.classList.toggle('open');mb.setAttribute('aria-expanded',o)});
+ addEventListener('keydown',e=>{if(e.key==='Escape'&&nav.classList.contains('open'))closeMenu(true)});
+ const re=()=>place(active,true);addEventListener('resize',re);if(document.fonts)document.fonts.ready.then(re);
+ /* scenes segmented control (hidden select stays the source of truth) */
+ const sel=$('scenes'),seg=$('segScenes'),opts=[...seg.querySelectorAll('[role=radio]')],sg=seg.querySelector('.seg-goo');
+ function paint(){const i=Math.max(0,opts.findIndex(o=>o.dataset.v===sel.value));sg.style.setProperty('--i',i);opts.forEach((o,k)=>{o.setAttribute('aria-checked',k===i);o.tabIndex=k===i?0:-1})}
+ function pick(i,focus){const o=opts[i];if(!o)return;if(sel.value!==o.dataset.v){sel.value=o.dataset.v;sel.dispatchEvent(new Event('change',{bubbles:true}))}paint();if(focus)o.focus()}
+ opts.forEach((o,i)=>{o.addEventListener('click',()=>pick(i));o.addEventListener('keydown',e=>{const k={ArrowRight:1,ArrowDown:1,ArrowLeft:-1,ArrowUp:-1}[e.key];if(!k)return;e.preventDefault();pick((i+k+opts.length)%opts.length,true)})});
+ sel.addEventListener('change',paint);paint();
+ /* generate button blob burst */
+ const gb=document.querySelector('.gen');
+ gb.addEventListener('click',e=>{if(rm.matches||gb.disabled)return;const l=gb.querySelector('.gen-goo'),r=gb.getBoundingClientRect();
+  const x=e.detail?e.clientX-r.left:r.width/2,y=e.detail?e.clientY-r.top:r.height/2;
+  for(let k=0;k<6;k++){const b=document.createElement('i'),s=4+Math.random()*4,a=k/6*Math.PI*2+Math.random()*.6,d=26+Math.random()*22;
+   b.className='gen-b';b.style.cssText=`width:${s}px;height:${s}px;left:${x-s/2}px;top:${y-s/2}px`;l.appendChild(b);
+   b.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${Math.cos(a)*d}px,${Math.sin(a)*d}px) scale(1)`,opacity:1,offset:.45},{transform:'translate(0,0) scale(.3)',opacity:0}],{duration:600,easing:'cubic-bezier(.22,1,.36,1)'}).onfinish=()=>b.remove()}});
+})();
 </script></body></html>
