@@ -71,7 +71,7 @@ textarea{min-height:110px;resize:vertical}
 /* jobs */
 .section-head{display:flex;justify-content:space-between;align-items:baseline;margin:8px 0 14px}
 .job{display:grid;grid-template-columns:220px 1fr;gap:24px}
-.frame{aspect-ratio:9/16;border-radius:10px;overflow:hidden;background:#EFEEEA;border:1px solid var(--line)}
+.frame{position:relative;isolation:isolate;align-self:start;aspect-ratio:9/16;border-radius:10px;overflow:hidden;background:#000;border:1px solid var(--line)}
 .frame video{width:100%;height:100%;display:block;background:#000;object-fit:contain}
 .ph{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--mu);text-align:center;padding:14px;font-size:13px}
 .ph b{color:var(--ink);text-transform:capitalize;font-size:15px}
@@ -220,7 +220,183 @@ html{scroll-behavior:smooth}
 .gen:hover:not(:disabled) .gen-base,.gen:focus-visible .gen-base{opacity:1;transform:scale(1.05,1.16)}
 .gen-b{position:absolute;border-radius:50%;background:var(--gold)}
 .gen-lb{position:relative}
+/* job card: refine frame */
+.jb{min-width:0}
+.nt,.nt *,.nt *::before,.nt *::after{transition:none!important}
+.fr-media{position:absolute;inset:0;transition:filter .6s cubic-bezier(.22,1,.36,1),transform .6s cubic-bezier(.22,1,.36,1),opacity .6s cubic-bezier(.22,1,.36,1)}
+.fr-bg{position:absolute;inset:0;background:var(--ink)}
+.frame video{position:absolute;inset:0}
+.frame[data-st=queued] .fr-media{filter:blur(18px) saturate(.3);transform:scale(1.08);opacity:.35}
+.frame[data-st=generating] .fr-media{filter:blur(12px) saturate(.6);transform:scale(1.05);opacity:.55}
+.frame[data-st=refining] .fr-media{filter:blur(5px) saturate(.85);transform:scale(1.02);opacity:.8}
+.frame[data-st=complete] .fr-media{filter:blur(0) saturate(1);transform:scale(1);opacity:1}
+.frame[data-st=error] .fr-media{filter:blur(0) saturate(1);transform:scale(1);opacity:.25}
+.fr-deco{position:absolute;inset:0;pointer-events:none;transition:opacity .6s cubic-bezier(.22,1,.36,1)}
+.frame.hasv .fr-deco{opacity:0}
+.fr-box{position:absolute;inset:12px 12px 28px;border:1px solid rgba(255,255,255,.14);border-radius:6px}
+.fr-scrub{position:absolute;left:12px;right:12px;bottom:14px;height:2px;background:rgba(255,255,255,.14);overflow:hidden}
+.fr-scrub::after{content:"";position:absolute;inset:0;background:var(--gold);transform:scaleX(var(--p,.04));transform-origin:left;transition:transform .6s cubic-bezier(.22,1,.36,1)}
+.fr-band{position:absolute;left:0;right:0;top:0;height:40%;background:rgba(247,246,243,.1);opacity:0;pointer-events:none;transform:translateY(-100%)}
+.frame[data-st=queued]:not(.off) .fr-band,.frame[data-st=generating]:not(.off) .fr-band,.frame[data-st=refining]:not(.off) .fr-band{opacity:1;animation:sweep 1.8s cubic-bezier(.22,1,.36,1) infinite}
+@keyframes sweep{from{transform:translateY(-100%)}to{transform:translateY(250%)}}
+.fr-chip{position:absolute;top:10px;left:10px;z-index:3;display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 8px;border-radius:99px;background:rgba(26,26,26,.82);color:#fff;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;transition:opacity .4s cubic-bezier(.22,1,.36,1)}
+.fr-chip i{width:6px;height:6px;border-radius:50%;background:var(--gold)}
+.fr-chip.gone{opacity:0}
+.fr-ct{transition:opacity .18s cubic-bezier(.22,1,.36,1)}
+.fr-err{position:absolute;inset:0;z-index:4;display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:16px;text-align:center}
+.frame[data-st=error] .fr-err{display:flex}
+.fr-err p{margin:0;max-width:100%;font-size:13px;line-height:1.4;color:#F2F2EF;word-break:break-word;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.fr-retry{background:var(--gold);color:#000;border:0;border-radius:999px;padding:9px 22px;font:inherit;font-weight:700;cursor:pointer;transition:background-color .2s}
+.fr-retry:hover{background:#B8A06F}
+.fr-retry:disabled{opacity:.6;cursor:default}
+.fr-retry:focus-visible{outline:2px solid #fff;outline-offset:3px;box-shadow:0 0 0 5px var(--ink)}
+/* job card: thought line */
+.tl{margin:0 0 14px;border:1px solid var(--line);border-radius:10px;background:#FCFBF9}
+.tl-h{display:flex;align-items:center;gap:10px;width:100%;background:none;border:0;border-radius:10px;padding:10px 12px;font:inherit;color:var(--ink);cursor:pointer;text-align:left}
+.tl-h::after{content:"";flex:none;width:7px;height:7px;border:solid var(--mu);border-width:0 2px 2px 0;transform:rotate(45deg);margin:-3px 2px 0 0;transition:transform .35s cubic-bezier(.22,1,.36,1)}
+.tl-h[aria-expanded="true"]::after{transform:rotate(-135deg);margin:3px 2px 0 0}
+.tl-g{flex:none;width:10px;height:10px;border-radius:50%;background:var(--gold)}
+.tl.run .tl-g{animation:breathe 1.6s ease-in-out infinite}
+.tl.bad .tl-g{background:#B3261E}
+@keyframes breathe{0%,100%{opacity:.4}50%{opacity:1}}
+.tl-l{display:grid;flex:1;min-width:0;font-size:14px;font-weight:600}
+.tl-l>span{grid-area:1/1;transition:opacity .4s cubic-bezier(.22,1,.36,1),filter .4s cubic-bezier(.22,1,.36,1)}
+.tl-b{opacity:0;filter:blur(6px)}
+.tl.fin .tl-a{opacity:0;filter:blur(6px)}
+.tl.fin .tl-b{opacity:1;filter:blur(0)}
+.tl.bad .tl-b{color:#B3261E}
+.tl-c{flex:none;font-size:13px;color:var(--mu);font-variant-numeric:tabular-nums;transition:opacity .4s cubic-bezier(.22,1,.36,1)}
+.tl.fin .tl-c{opacity:0}
+.tl-tr{display:grid;grid-template-rows:1fr;transition:grid-template-rows .35s cubic-bezier(.22,1,.36,1),opacity .35s cubic-bezier(.22,1,.36,1)}
+.tl-tr.shut{grid-template-rows:0fr;opacity:0}
+.tl-in{min-height:0;overflow:hidden}
+.tl-tr.shut .tl-in{visibility:hidden;transition:visibility 0s .35s}
+.tl-steps{list-style:none;margin:0;padding:2px 12px 10px;display:grid;gap:8px}
+.tl-steps li{display:grid;grid-template-columns:16px 1fr;gap:10px;align-items:start;font-size:14px}
+.tl-steps li.rise{animation:rise .35s cubic-bezier(.22,1,.36,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}}
+.tl-steps b{font-weight:600}
+.tl-steps .sd{display:block;font-size:13px;color:var(--mu)}
+.ic{position:relative;width:16px;height:16px;margin-top:3px}
+.ic::before,.ic::after{content:"";position:absolute}
+li[data-s=cur] .ic::before{left:3px;top:3px;width:10px;height:10px;border-radius:50%;border:2px solid var(--gold);animation:breathe 1.6s ease-in-out infinite}
+li[data-s=done] .ic::before{left:5px;top:1px;width:5px;height:10px;border:solid var(--ok);border-width:0 2px 2px 0;transform:rotate(45deg)}
+li[data-s=bad] .ic::before,li[data-s=bad] .ic::after{left:7px;top:1px;width:2px;height:14px;background:#B3261E;transform:rotate(45deg)}
+li[data-s=bad] .ic::after{transform:rotate(-45deg)}
+.tl-in details{margin:4px 12px 12px}
 .lp-sec,footer{content-visibility:auto;contain-intrinsic-size:auto 480px}
+/* marketing sections */
+.mk{padding:72px 0;content-visibility:auto;contain-intrinsic-size:auto 640px}
+.mk.ink{background:var(--ink);color:#F7F6F3}
+.mk.ink .label,.gap .label{color:#C4A874}
+.mk.ink :focus-visible{outline-color:#fff}
+.mk-g3,.mk-g6{display:grid;gap:20px;grid-template-columns:repeat(3,1fr)}
+.mk-g3>*,.mk-g6>*{margin:0!important}
+.mk .card h3{margin:6px 0 8px;font-size:18px;letter-spacing:-.01em}
+.mk .card p{margin:0;color:var(--mu);font-size:15px}
+.js .mk-r{opacity:0;transform:translateY(16px);transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .5s cubic-bezier(.22,1,.36,1)}
+.js .mk-r.in{opacity:1;transform:none}
+.gap{background:var(--ink);color:#F7F6F3;border-radius:12px;padding:28px;margin-top:20px}
+.gap p{margin:10px 0 0;max-width:62ch;color:#E4E4E1;font-size:16px}
+.gap .gl{margin-top:14px;color:#C4A874;font-weight:700;font-size:18px}
+/* ticker */
+.tk{background:var(--ink);border-top:1px solid rgba(166,139,91,.45);border-bottom:1px solid rgba(166,139,91,.45);overflow:hidden;height:48px;display:flex;align-items:center;color:#C4A874}
+.tk-t{display:flex;width:max-content;animation:tkm 44s linear infinite}
+.tk-g{display:flex;align-items:center;flex:none}
+.tk-g span{font-size:12px;font-weight:700;letter-spacing:.16em;white-space:nowrap}
+.dm{flex:none;width:6px;height:6px;margin:0 24px;background:var(--gold);transform:rotate(45deg)}
+@keyframes tkm{to{transform:translateX(-50%)}}
+.tk:hover .tk-t,.tk:focus-within .tk-t,.tk.off .tk-t{animation-play-state:paused}
+/* pipeline */
+.pp{position:relative;padding-top:22px;--p:0}
+.pp-line{position:absolute;left:0;right:0;top:10px;height:2px;background:rgba(255,255,255,.14)}
+.pp-fill{position:absolute;inset:0;background:var(--gold);transform:scaleX(var(--p));transform-origin:left}
+.pp-g{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;list-style:none;margin:0;padding:0}
+.pc{position:relative;background:#232323;border-radius:12px;padding:0 22px 24px}
+.pc-bar{position:relative;height:4px;margin:0 -22px 20px;background:#3A3A3A;border-radius:12px 12px 0 0;overflow:hidden}
+.pc-bar::after,.pc-node::after{content:"";position:absolute;background:var(--gold);transition:transform .5s cubic-bezier(.22,1,.36,1)}
+.pc-bar::after{inset:0;transform:scaleX(0);transform-origin:left}
+.pc-node{position:absolute;top:-17px;left:18px;width:12px;height:12px;border-radius:50%;background:var(--ink);border:2px solid #4A4A4A}
+.pc-node::after{inset:-2px;border-radius:50%;transform:scale(0)}
+.pc.lit .pc-bar::after{transform:scaleX(1)}
+.pc.lit .pc-node::after{transform:scale(1)}
+.pc>:not(.pc-bar):not(.pc-node){opacity:.7;transition:opacity .5s cubic-bezier(.22,1,.36,1)}
+.pc.lit>:not(.pc-bar):not(.pc-node){opacity:1}
+.pc .n{font-size:11px;font-weight:700;letter-spacing:.12em;color:#C4A874}
+.pc h3{margin:6px 0 8px;font-size:20px;letter-spacing:-.01em;color:#F7F6F3}
+.pc p{margin:0;color:#D0D0CD;font-size:15px}
+/* example terminal */
+.term{max-width:780px;background:var(--ink);color:#F7F6F3;border-radius:12px;border-top:4px solid var(--gold);box-shadow:var(--shadow);overflow:hidden}
+.term-h{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 18px;border-bottom:1px solid #333}
+.term-t{font:12px ui-monospace,SFMono-Regular,Consolas,monospace;color:#B8B8B5}
+.chip{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#C4A874;border:1px solid #C4A874;border-radius:99px;padding:3px 10px}
+.term-b{padding:18px;font:14px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace}
+.term-p{min-height:calc(1.6em*2);word-break:break-word}
+.pr{color:#C4A874}
+.cur-b{display:inline-block;width:.55em;height:1.1em;margin-left:2px;background:#C4A874;vertical-align:text-bottom}
+.term.live .cur-b{animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.plans{display:grid;margin-top:12px;padding-top:12px;border-top:1px dashed #3A3A3A}
+.plan{grid-area:1/1;list-style:none;margin:0;padding:0}
+.plan:not(.cur){visibility:hidden}
+.plan li{display:grid;grid-template-columns:72px 1fr;gap:10px;padding:3px 0}
+.js .plan li{opacity:0;transform:translateY(6px);transition:opacity .35s cubic-bezier(.22,1,.36,1),transform .35s cubic-bezier(.22,1,.36,1)}
+.js .plan li.on{opacity:1;transform:none}
+.plan .k{color:#C4A874;font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding-top:2px}
+.term-act{margin-top:20px}
+/* quality gate */
+.qg-sub{margin:-12px 0 28px;color:#D0D0CD;font-size:17px;max-width:52ch}
+.qg{display:grid;grid-template-columns:1fr auto;gap:48px;align-items:center}
+.ck{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.ck li{display:flex;align-items:center;gap:12px;font-size:16px;color:#F7F6F3}
+.js .ck li{opacity:0;transition:opacity .35s cubic-bezier(.22,1,.36,1);transition-delay:calc(var(--i)*60ms)}
+.js .ck.on li{opacity:1}
+.ck-t{position:relative;flex:none;width:20px;height:20px;overflow:hidden}
+.ck-t svg{display:block;width:20px;height:20px}
+.js .ck-t::after{content:"";position:absolute;inset:0;background:var(--ink);transform-origin:right;transition:transform .4s cubic-bezier(.22,1,.36,1);transition-delay:calc(var(--i)*60ms)}
+.js .ck.on .ck-t::after{transform:scaleX(0)}
+.big{text-align:center}
+.big .cnt{display:inline-block;min-width:1ch;font-size:clamp(72px,12vw,120px);font-weight:800;line-height:1;letter-spacing:-.03em;color:#C4A874;font-variant-numeric:tabular-nums}
+.big small{display:block;margin-top:6px;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#E4E4E1}
+/* example topics */
+.tp-lab{margin:0 0 12px}
+.tpg{display:grid;gap:16px;grid-template-columns:repeat(5,1fr)}
+.tp{position:relative;display:flex;flex-direction:column;gap:6px;text-align:left;font:inherit;color:var(--ink);background:#fff;border:1px solid var(--line);border-top:4px solid var(--gold);border-radius:12px;box-shadow:var(--shadow);padding:16px 16px 24px;cursor:pointer;transition:transform .35s cubic-bezier(.22,1,.36,1)}
+.tp b{font-size:15px;line-height:1.25}
+.tp .h{font-size:14px;color:var(--mu)}
+.tp::after{content:"";position:absolute;left:16px;right:16px;bottom:12px;height:2px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .35s cubic-bezier(.22,1,.36,1)}
+.tp:hover,.tp:focus-visible{transform:translateY(-4px)}
+.tp:hover::after,.tp:focus-visible::after{transform:scaleX(1)}
+/* features */
+.mk-f{transition:transform .35s cubic-bezier(.22,1,.36,1)}
+.js .mk-r.in.mk-f:hover{transform:translateY(-3px)}
+.card.dk{background:var(--ink);color:#F7F6F3;border-color:var(--ink);border-top:4px solid var(--gold)}
+.card.dk .label{color:#C4A874}
+.card.dk p{color:#E4E4E1}
+.big2 .cnt{display:inline-block;min-width:2ch;font-size:64px;font-weight:800;line-height:1.1;letter-spacing:-.03em;color:#C4A874;font-variant-numeric:tabular-nums}
+/* closing CTA */
+.mk-cta .lp-h2{margin-bottom:22px}
+.cta-row{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+.mk-tl{color:#F7F6F3;font-weight:600;text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--gold)}
+.mk-tl:hover{color:#C4A874}
+@media(max-width:900px){
+ .mk-g3{grid-template-columns:1fr}.mk-g6{grid-template-columns:repeat(2,1fr)}.tpg{grid-template-columns:repeat(3,1fr)}
+ .pp{padding:0 0 0 30px}
+ .pp-line{left:8px;right:auto;top:0;bottom:0;width:2px}
+ .pp-fill{transform:scaleY(var(--p));transform-origin:top}
+ .pp-g{grid-template-columns:1fr}
+ .pc-node{top:22px;left:-27px}
+}
+@media(max-width:700px){.qg{grid-template-columns:1fr;gap:28px}.big{text-align:left}.term-p{min-height:calc(1.6em*3)}}
+@media(max-width:760px){.mk{padding:52px 0}}
+@media(max-width:560px){.mk-g6{grid-template-columns:1fr}.tpg{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:400px){.tpg{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){
+ .js .mk-r,.js .plan li{opacity:1;transform:none}
+ .js .ck li{opacity:1}.js .ck-t::after{display:none}
+ .tk{height:auto;padding:10px 16px}.tk-t{width:auto;flex-wrap:wrap}.tk-g{flex-wrap:wrap;row-gap:8px}.tk-g:not(:first-child){display:none}
+ .mk-f:hover,.tp:hover,.tp:focus-visible,.js .mk-r.in.mk-f:hover{transform:none!important}
+}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 </style><script>document.documentElement.classList.add('js')</script></head><body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><filter id="goo" x="-50%" y="-150%" width="200%" height="400%"><feGaussianBlur in="SourceGraphic" stdDeviation="8" result="b"/><feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="g"/><feComposite in="SourceGraphic" in2="g" operator="atop"/></filter></defs></svg>
@@ -244,48 +420,125 @@ html{scroll-behavior:smooth}
  </div>
 </div></section>
 
-<section class="lp-sec" id="how" aria-labelledby="how-h"><div class="wrap">
- <div class="label rv">How it works</div>
- <h2 class="lp-h2 rv" id="how-h">Four steps from topic to finished video</h2>
- <ol class="lp-grid">
-  <li class="card rv"><div class="label">01</div><h3>Script</h3><p>An LLM writes the hook, the full script and a structured scene plan.</p></li>
-  <li class="card rv"><div class="label">02</div><h3>Generate</h3><p>Visuals and voiceover are produced for each scene.</p></li>
-  <li class="card rv"><div class="label">03</div><h3>Compose</h3><p>Scenes, audio and captions become a 9:16 MP4.</p></li>
-  <li class="card rv"><div class="label">04</div><h3>Validate</h3><p>Automated checks on format, duration and completeness.</p></li>
- </ol>
-</div></section>
+<div class="tk" data-k="tk" aria-hidden="true"><div class="tk-t"><div class="tk-g"><span>TOPIC IN</span><i class="dm"></i><span>SCRIPT</span><i class="dm"></i><span>VOICE</span><i class="dm"></i><span>VISUALS</span><i class="dm"></i><span>CAPTIONS</span><i class="dm"></i><span>9:16 MP4</span><i class="dm"></i><span>QUALITY GATE</span><i class="dm"></i><span>READY TO POST</span><i class="dm"></i></div></div></div>
 
-<section class="lp-sec" aria-labelledby="why-h"><div class="wrap">
- <div class="label rv">Why FeedForge</div>
- <h2 class="lp-h2 rv" id="why-h">Feeds need videos. Videos take time.</h2>
- <div class="lp-grid g3">
-  <article class="card rv"><h3>Creators</h3><p>Scripting, visuals, editing and captions take hours per video.</p></article>
-  <article class="card rv"><h3>Platform</h3><p>New and niche communities often start with thin or empty feeds.</p></article>
-  <article class="card rv"><h3>Users</h3><p>Sparse feeds weaken discovery and engagement.</p></article>
+<section class="mk" aria-labelledby="pb-h"><div class="wrap">
+ <div class="label mk-r">01 · PROBLEM + GAP</div>
+ <h2 class="lp-h2 mk-r" id="pb-h">The feed is hungry. Nobody has time to cook.</h2>
+ <div class="mk-g3">
+  <article class="card mk-r"><h3>Creators</h3><p>Have the knowledge. Not the editing hours.</p></article>
+  <article class="card mk-r"><h3>Platform</h3><p>Needs more video than people can make.</p></article>
+  <article class="card mk-r"><h3>Users</h3><p>Want signal from people they trust.</p></article>
+ </div>
+ <div class="gap mk-r">
+  <div class="label">WHY CURRENT TOOLS FALL SHORT</div>
+  <p>Runway, Pika and CapCut are strong at clips. Each one still needs a human at every step: prompt, cut, caption, check, export.</p>
+  <p class="gl">There is no repeatable system that turns one topic into a finished vertical video.</p>
  </div>
 </div></section>
 
-<section class="lp-sec" aria-labelledby="feat-h"><div class="wrap">
- <div class="label rv">Features</div>
- <h2 class="lp-h2 rv" id="feat-h">Built to ship a video, not a draft</h2>
- <div class="lp-grid g3">
-  <article class="card rv"><h3>Structured story engine</h3><p>Every video starts from a hook, a full script and a scene-by-scene plan.</p></article>
-  <article class="card rv"><h3>Resilient generation</h3><p>When a scene cannot be generated, a fallback keeps the video moving.</p></article>
-  <article class="card rv"><h3>Auto-synced captions</h3><p>Captions are generated with the voiceover and composed into the final video.</p></article>
-  <article class="card rv"><h3>Quality gate</h3><p>Automated checks run before a video is marked as passed.</p></article>
-  <article class="card rv"><h3>Batch mode</h3><p>Queue several topics at once and let the workers run through them.</p></article>
+<section class="mk ink" id="how" aria-labelledby="how-h"><div class="wrap">
+ <div class="label mk-r">02 · THE PIPELINE</div>
+ <h2 class="lp-h2 mk-r" id="how-h">Four stages. Zero hand-offs.</h2>
+ <div class="pp" id="pp" data-k="pp">
+  <div class="pp-line" aria-hidden="true"><div class="pp-fill"></div></div>
+  <ol class="pp-g">
+   <li class="pc"><i class="pc-node" aria-hidden="true"></i><div class="pc-bar"></div><div class="n">01</div><h3>Script</h3><p>A structured scene plan: hook, scenes, narration and a visual prompt for every scene.</p></li>
+   <li class="pc"><i class="pc-node" aria-hidden="true"></i><div class="pc-bar"></div><div class="n">02</div><h3>Generate</h3><p>Visuals and voice are made scene by scene, in parallel. If a source fails, a fallback steps in.</p></li>
+   <li class="pc"><i class="pc-node" aria-hidden="true"></i><div class="pc-bar"></div><div class="n">03</div><h3>Compose</h3><p>Scenes cut to the narration, captions synced to the words, framed for 9:16.</p></li>
+   <li class="pc"><i class="pc-node" aria-hidden="true"></i><div class="pc-bar"></div><div class="n">04</div><h3>Validate</h3><p>Automated checks run before any video is marked ready.</p></li>
+  </ol>
  </div>
 </div></section>
 
-<div class="wrap"><section class="lp-cta rv" aria-labelledby="cta-h">
- <div><h2 id="cta-h">Ready when you are.</h2><p>Type a topic and get a publish-ready video.</p></div>
- <a class="lp-btn" href="#app">Make your first video</a>
-</section></div>
+<section class="mk" aria-labelledby="ex-h"><div class="wrap">
+ <div class="label mk-r">03 · EXAMPLE</div>
+ <h2 class="lp-h2 mk-r" id="ex-h">Watch a topic become a script.</h2>
+ <div class="term mk-r" id="term" data-k="term" role="group" aria-label="Example plan for a sample topic">
+  <div class="term-h"><span class="term-t">feedforge / example</span><span class="chip">Example output, not a live generation</span></div>
+  <div class="term-b">
+   <div class="term-p"><span class="pr">topic &gt; </span><span id="typed">Why your first ten users will not come from ads</span><span class="cur-b" aria-hidden="true"></span></div>
+   <div class="plans">
+    <ol class="plan cur">
+     <li><span class="k">Hook</span><span>Ads buy attention. Your first ten users come from conversations.</span></li>
+     <li><span class="k">Scene 1</span><span>A founder watches an ad dashboard spend money and show no signups.</span></li>
+     <li><span class="k">Scene 2</span><span>She posts one honest question in a niche community and gets replies.</span></li>
+     <li><span class="k">Scene 3</span><span>The people who answered become the first ten users.</span></li>
+     <li><span class="k">CTA</span><span>Join the conversation on Qoneqt.</span></li>
+    </ol>
+    <ol class="plan">
+     <li><span class="k">Hook</span><span>A robot arm does not need a lab. It needs cardboard and a syringe.</span></li>
+     <li><span class="k">Scene 1</span><span>Cut cardboard strips and pin them together as an elbow and a wrist.</span></li>
+     <li><span class="k">Scene 2</span><span>Link syringes with tubing so pushing one plunger moves the arm.</span></li>
+     <li><span class="k">Scene 3</span><span>Lift a paper cup and show what simple hydraulics can do.</span></li>
+     <li><span class="k">CTA</span><span>Join the conversation on Qoneqt.</span></li>
+    </ol>
+    <ol class="plan">
+     <li><span class="k">Hook</span><span>Your microwave has hot spots because of physics, not bad design.</span></li>
+     <li><span class="k">Scene 1</span><span>Microwaves bounce around the box and form standing waves.</span></li>
+     <li><span class="k">Scene 2</span><span>Where the waves peak, food heats fast. Where they cancel, it stays cool.</span></li>
+     <li><span class="k">Scene 3</span><span>The turntable moves your food through those hot and cool spots.</span></li>
+     <li><span class="k">CTA</span><span>Join the conversation on Qoneqt.</span></li>
+    </ol>
+   </div>
+  </div>
+ </div>
+ <div class="term-act mk-r"><button type="button" class="lp-btn" id="tryReal">Try it for real</button></div>
+</div></section>
+
+<section class="mk ink" aria-labelledby="qg-h"><div class="wrap">
+ <div class="label mk-r">04 · THE QUALITY GATE</div>
+ <h2 class="lp-h2 mk-r" id="qg-h">Nothing ships until it passes.</h2>
+ <p class="qg-sub mk-r">Every video is probed before it is marked ready. A fail comes with a reason, not a shrug.</p>
+ <div class="qg">
+  <ul class="ck mk-ck">
+   <li style="--i:0"><span class="ck-t"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#A68B5B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>File is not empty</li>
+   <li style="--i:1"><span class="ck-t"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#A68B5B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Video stream present</li>
+   <li style="--i:2"><span class="ck-t"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#A68B5B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>9:16 aspect ratio</li>
+   <li style="--i:3"><span class="ck-t"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#A68B5B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>1080 by 1920 resolution</li>
+   <li style="--i:4"><span class="ck-t"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#A68B5B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Audio track present</li>
+   <li style="--i:5"><span class="ck-t"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#A68B5B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Duration between 8 and 90 seconds</li>
+   <li style="--i:6"><span class="ck-t"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#A68B5B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Scene count in range</li>
+  </ul>
+  <div class="big mk-r"><span class="cnt" data-count="7">7</span><small>checks</small></div>
+ </div>
+</div></section>
+
+<section class="mk" aria-labelledby="tp-h"><div class="wrap">
+ <div class="label mk-r">05 · BUILT FOR LOOPS</div>
+ <h2 class="lp-h2 mk-r" id="tp-h">Pick a topic. Make a loop.</h2>
+ <div class="label mk-r tp-lab">Example hooks</div>
+ <div class="tpg mk-r">
+  <button type="button" class="tp" data-tp="AI and Computer Science"><span class="label">01</span><b>AI and Computer Science</b><span class="h">You do not need a GPU to ship your first model.</span></button>
+  <button type="button" class="tp" data-tp="Physics"><span class="label">02</span><b>Physics</b><span class="h">Your microwave is a lesson in standing waves.</span></button>
+  <button type="button" class="tp" data-tp="College Admissions"><span class="label">03</span><b>College Admissions</b><span class="h">The essay is not about you. It is about one Tuesday.</span></button>
+  <button type="button" class="tp" data-tp="Startups"><span class="label">04</span><b>Startups</b><span class="h">Your first ten users will not come from ads.</span></button>
+  <button type="button" class="tp" data-tp="Robotics"><span class="label">05</span><b>Robotics</b><span class="h">Build your first arm out of cardboard. Seriously.</span></button>
+ </div>
+</div></section>
+
+<section class="mk" aria-labelledby="ft-h"><div class="wrap">
+ <div class="label mk-r">06 · BATCH MODE + FEATURES</div>
+ <h2 class="lp-h2 mk-r" id="ft-h">Make ten while you make coffee.</h2>
+ <div class="mk-g6">
+  <article class="card dk mk-r mk-f"><div class="label">Batch mode</div><div class="big2"><span class="cnt" data-count="25">25</span></div><p>topics in one batch</p></article>
+  <article class="card mk-r mk-f"><h3>Structured Story Engine</h3><p>The scene plan is schema-validated, so every stage gets typed, predictable input.</p></article>
+  <article class="card mk-r mk-f"><h3>Resilient Generation</h3><p>Retries and fallbacks per scene. One failed call degrades a scene, not the whole video.</p></article>
+  <article class="card mk-r mk-f"><h3>Auto-synced Captions</h3><p>Word-level timing drives on-screen captions, so videos work on mute.</p></article>
+  <article class="card mk-r mk-f"><h3>Quality Gate</h3><p>Seven checks before anything is marked ready.</p></article>
+  <article class="card mk-r mk-f"><h3>Batch Mode</h3><p>Queue many topics and let the workers run unattended.</p></article>
+ </div>
+</div></section>
 
 <header class="top"><div class="wrap">
  <div class="wordmark" aria-label="FeedForge">FEEDFORGE</div>
  <div class="label">CTRL FREAK 2026 · QONEQT · TEAM OPTIMUS</div>
 </div></header>
+
+<section class="mk ink mk-cta" aria-labelledby="cta2-h"><div class="wrap">
+ <h2 class="lp-h2 mk-r" id="cta2-h">Your next post is one topic away.</h2>
+ <div class="cta-row mk-r"><a class="lp-btn" href="#app" id="mkGo">Light the furnace</a><a class="mk-tl" href="#jobs-h">See finished videos</a></div>
+</div></section>
 
 <main class="wrap" id="app">
 <section class="hero">
@@ -370,37 +623,121 @@ function when(d){const t=d.toDateString()===new Date().toDateString();
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
 const OPEN={};const NODES={};
-function card(j){const q=j.quality,pp=j.publish_pack,deg=j.degraded_scenes&&j.degraded_scenes.length;
- const act=!OFFLINE&&j.status==='running',stale=OFFLINE&&(j.status==='running'||j.status==='queued'),st=stale?'unknown':j.status;
- const media=j.video_url?`<video controls playsinline preload="metadata" src="${j.video_url}" aria-label="Video for ${esc(j.topic)}"></video>`
-  :`<div class="ph">${j.status==='failed'?'<b>No video</b>Generation failed':stale?'<b>Paused</b>Server unreachable':`<b>${esc(j.stage)}</b>${j.status==='queued'?'Waiting for a worker':'Working on it…'}`}</div>`;
- const d=made(j);
- return `<div class="frame${j.video_url?'':' novid'}${act?' skel':''}">${media}</div>
- <div>
-  <div class="label">Job ${esc(String(j.id).slice(0,6))} · <time datetime="${d.toISOString()}">${esc(when(d))}</time></div>
-  <h3>${esc(j.topic)}</h3>
-  <div class="pills">
-   <span class="pill ${esc(st)}">${esc(st)}</span>
-   ${q?`<span class="pill ${q.passed?'pass':'fail'}">Quality gate ${q.passed?'passed':'failed'}</span>`:''}
-   ${deg?`<span class="pill warn plain">Fallback scenes: ${esc(j.degraded_scenes.join(', '))}</span>`:''}
+const SN=[['Script','writing the scene plan'],['Generate','visuals and voice'],['Compose','editing to 9:16'],['Validate','quality gate']];
+const CH={queued:'Queued',generating:'Generating',refining:'Refining',complete:'Complete'};
+const PG={queued:.04,generating:.35,refining:.7,complete:1};
+const RM=()=>matchMedia('(prefers-reduced-motion:reduce)').matches;
+function fstage(j){if(j.status==='failed')return'error';if(j.status==='done')return'complete';
+ if(j.status==='running')return j.stage==='compose'||j.stage==='validate'?'refining':'generating';return'queued'}
+function setT(el,t){if(el._t!==t){el._t=t;el.textContent=t}}
+function setH(el,h){if(el._h!==h){el._h=h;el.innerHTML=h}}
+function fmt(ms){const t=Math.max(0,Math.floor(ms/100)),s=(t%600)/10;return Math.floor(t/600)+':'+(s<10?'0':'')+s.toFixed(1)}
+function clk(n,s){if(n.clk!==s){n.clk=s;n.cl.textContent=s}}
+// one shared rAF loop drives every running clock; it stops when the tab is hidden or nothing is running
+let RAF=0;
+function tick(now){RAF=0;if(document.hidden)return;let any=false;
+ for(const k in NODES){const n=NODES[k];if(!n.run)continue;any=true;clk(n,fmt(n.base+(now-n.t0)))}
+ if(any)RAF=requestAnimationFrame(tick)}
+function kick(){if(!RAF&&!document.hidden)RAF=requestAnimationFrame(tick)}
+document.addEventListener('visibilitychange',kick);
+
+// static skeleton, built once per job; updateCard() then mutates it in place
+function card(j){const id=esc(j.id);
+ return `<div class="frame" data-st="queued">
+  <div class="fr-media"><div class="fr-bg"></div></div>
+  <div class="fr-deco" aria-hidden="true"><i class="fr-box"></i><i class="fr-scrub"></i></div>
+  <div class="fr-band" aria-hidden="true"></div>
+  <span class="fr-chip" aria-hidden="true"><i></i><span class="fr-ct"></span></span>
+  <div class="fr-err"><button class="fr-retry" type="button" aria-label="Retry: ${esc(j.topic)}">Retry</button><p></p></div>
+ </div>
+ <div class="jb">
+  <div class="tl">
+   <button class="tl-h" type="button" aria-expanded="true" aria-controls="tr-${id}"><i class="tl-g" aria-hidden="true"></i><span class="tl-l"><span class="tl-a"></span><span class="tl-b" aria-hidden="true"></span></span><span class="tl-c" aria-hidden="true">0:00.0</span></button>
+   <div class="tl-tr" id="tr-${id}"><div class="tl-in">
+    <ol class="tl-steps"></ol>
+    <details data-id="${id}" ontoggle="OPEN[this.dataset.id]=this.open;if(this.open){const p=this.querySelector('pre');p.scrollTop=p.scrollHeight}"><summary></summary><pre></pre></details>
+   </div></div>
   </div>
-  <dl class="stats">
-   <div><dt>Stage</dt><dd>${esc(j.stage)}</dd></div>
-   <div><dt>Elapsed</dt><dd>${esc(j.elapsed_s)}s</dd></div>
-   <div><dt>Est. cost</dt><dd>$${esc(j.est_cost_usd)}</dd></div>
-  </dl>
-  ${act?'<div class="skl skel" aria-hidden="true"><i></i><i></i></div>':''}
-  ${j.error||j.status==='failed'?`<div class="err" role="alert"><strong>Job failed</strong><p>${esc(j.error||'No error details were returned.')}</p></div>`:''}
-  ${pp?`<div class="pack">
-   <div class="prow"><div class="prow-h"><div class="label">Title</div><button class="btn ghost sm" data-copy="title" data-id="${esc(j.id)}">Copy</button></div><p class="ttl">${esc(pp.title)}</p></div>
-   <div class="prow"><div class="prow-h"><div class="label">Caption</div><button class="btn ghost sm" data-copy="caption" data-id="${esc(j.id)}">Copy</button></div><p class="cap">${esc(pp.caption)}</p></div>
-   <div class="prow"><div class="prow-h"><div class="label">Hashtags</div><button class="btn ghost sm" data-copy="tags" data-id="${esc(j.id)}">Copy</button></div><p class="tags">${esc((pp.hashtags||[]).join(' '))}</p></div>
-  </div>
-  <div class="actions">${j.video_url?`<a class="btn" href="${esc(j.video_url)}" download>Download MP4</a>`:''}<button class="btn ghost" data-copy="all" data-id="${esc(j.id)}">Copy all</button></div>`:''}
-  <details data-id="${esc(j.id)}" ${OPEN[j.id]?'open':''} ontoggle="OPEN[this.dataset.id]=this.open;if(this.open){const p=this.querySelector('pre');p.scrollTop=p.scrollHeight}">
-   <summary>Show pipeline log (${(j.logs||[]).length})</summary><pre>${esc((j.logs||[]).join('\n'))}</pre>
-  </details>
+  <div class="label jmeta"></div>
+  <h3></h3>
+  <div class="pills"></div>
+  <dl class="stats"></dl>
+  <div class="jerr"></div>
+  <div class="jpack"></div>
  </div>`}
+function bind(n,j){const s=x=>n.el.querySelector(x);
+ Object.assign(n,{fr:s('.frame'),med:s('.fr-media'),chip:s('.fr-chip'),ct:s('.fr-ct'),em:s('.fr-err p'),rt:s('.fr-retry'),
+  tl:s('.tl'),th:s('.tl-h'),la:s('.tl-a'),lb:s('.tl-b'),cl:s('.tl-c'),tr:s('.tl-tr'),ol:s('.tl-steps'),
+  det:s('details'),sum:s('summary'),pre:s('pre'),meta:s('.jmeta'),h3:s('h3'),pills:s('.pills'),stats:s('.stats'),jerr:s('.jerr'),jpack:s('.jpack'),lis:[]});
+ n.det.open=!!OPEN[j.id];
+ n.th.addEventListener('click',()=>{n.open=!n.open;sync(n)});
+ n.rt.addEventListener('click',()=>retry(n))}
+function sync(n){n.tr.classList.toggle('shut',!n.open);n.th.setAttribute('aria-expanded',n.open)}
+// Retry reuses one(): it reads the form, so fill it with this job's values, call it, then put the user's values back
+function retry(n){const j=n.j;if(!j)return;const t=$('topic'),sc=$('scenes'),pt=t.value,ps=sc.value;
+ let c=j.scenes!=null?j.scenes:(j.plan&&Array.isArray(j.plan.scenes)?j.plan.scenes.length:'');c=[4,5,6].includes(+c)?String(+c):'';
+ t.value=j.topic;sc.value=c;one();t.value=pt;sc.value=ps;
+ n.rt.disabled=true;setTimeout(()=>{n.rt.disabled=false},3000)}
+
+function updateCard(n,j){n.j=j;
+ const pp=j.publish_pack,q=j.quality,deg=j.degraded_scenes&&j.degraded_scenes.length,
+  stale=OFFLINE&&(j.status==='running'||j.status==='queued'),st=stale?'unknown':j.status,
+  stg=fstage(j),prev=n.stg,first=prev===undefined,fin=stg==='complete'||stg==='error',
+  e=+j.elapsed_s||0,d=made(j),id=esc(j.id);
+ n.el.classList.toggle('failed',j.status==='failed');
+
+ // refine frame
+ if(first||prev!==stg){n.fr.dataset.st=stg;if(PG[stg]!=null)n.fr.style.setProperty('--p',PG[stg]);
+  clearTimeout(n.cd);
+  if(stg==='error'||(stg==='complete'&&first))n.chip.classList.add('gone');
+  else{n.chip.classList.remove('gone');if(stg==='complete')n.cd=setTimeout(()=>n.chip.classList.add('gone'),2000)}}
+ n.fr.classList.toggle('off',!!stale);
+ const lbl=stale?'Paused':CH[stg];
+ if(lbl&&n.lbl!==lbl){n.lbl=lbl;
+  if(first||RM())n.ct.textContent=lbl;
+  else{n.ct.style.opacity=0;clearTimeout(n.cx);n.cx=setTimeout(()=>{n.ct.textContent=lbl;n.ct.style.opacity=1},180)}}
+ setT(n.em,j.error||'No error details were returned.');
+ if(j.video_url){let v=n.v;
+  if(!v){v=n.v=document.createElement('video');v.controls=true;v.playsInline=true;v.preload='metadata';v.setAttribute('aria-label','Video for '+j.topic);v.src=j.video_url;n.med.appendChild(v);n.fr.classList.add('hasv')}
+  else if(v.getAttribute('src')!==j.video_url)v.src=j.video_url}
+
+ // thought line
+ const run=j.status==='running'&&!OFFLINE;
+ n.tl.classList.toggle('run',run);n.tl.classList.toggle('fin',fin);n.tl.classList.toggle('bad',stg==='error');
+ if(!fin)setT(n.la,stale?'Paused · server unreachable':j.status==='running'?'Forging your video':'Waiting for a worker');
+ else setT(n.lb,(stg==='error'?'Stopped after ':'Produced in ')+e.toFixed(1)+'s');
+ n.la.setAttribute('aria-hidden',fin);n.lb.setAttribute('aria-hidden',!fin);
+ const now=performance.now();
+ if(run){if(!n.run||e*1000>n.base+(now-n.t0)){n.base=e*1000;n.t0=now}n.run=true;kick()}
+ else{n.run=false;clk(n,fmt(e*1000))}
+ const idx=STAGES.indexOf(j.stage),shown=j.status==='queued'?0:stg==='complete'?4:idx+1;
+ for(let i=0;i<shown&&i<4;i++){let li=n.lis[i];
+  if(!li){li=n.lis[i]=document.createElement('li');if(!n.quiet)li.className='rise';
+   li.innerHTML=`<i class="ic" aria-hidden="true"></i><div><b>${SN[i][0]}</b><span class="sd">${SN[i][1]}</span><span class="vh"></span></div>`;n.ol.appendChild(li)}
+  const s=stg==='complete'||i<idx?'done':stg==='error'?'bad':'cur';
+  if(li.dataset.s!==s){li.dataset.s=s;li.lastChild.lastChild.textContent={done:' (done)',bad:' (failed)',cur:' (in progress)'}[s]}}
+ if(first||(prev!==stg&&fin)){n.open=stg!=='complete';sync(n)}
+ const logs=j.logs||[],lt=logs.join('\n');
+ setT(n.sum,`Show pipeline log (${logs.length})`);
+ if(n.pre._t!==lt){const p=n.pre,stick=p.scrollTop+p.clientHeight>=p.scrollHeight-8;n.pre._t=lt;p.textContent=lt;if(n.det.open&&stick)p.scrollTop=p.scrollHeight}
+ n.stg=stg;
+
+ // card body (only regions whose markup changed are touched)
+ setH(n.meta,`Job ${esc(String(j.id).slice(0,6))} · <time datetime="${d.toISOString()}">${esc(when(d))}</time>`);
+ setT(n.h3,j.topic);
+ setH(n.pills,`<span class="pill ${esc(st)}">${esc(st)}</span>
+   ${q?`<span class="pill ${q.passed?'pass':'fail'}">Quality gate ${q.passed?'passed':'failed'}</span>`:''}
+   ${deg?`<span class="pill warn plain">Fallback scenes: ${esc(j.degraded_scenes.join(', '))}</span>`:''}`);
+ setH(n.stats,`<div><dt>Stage</dt><dd>${esc(j.stage)}</dd></div>
+   <div><dt>Elapsed</dt><dd>${esc(j.elapsed_s)}s</dd></div>
+   <div><dt>Est. cost</dt><dd>$${esc(j.est_cost_usd)}</dd></div>`);
+ setH(n.jerr,j.error||j.status==='failed'?`<div class="err" role="alert"><strong>Job failed</strong><p>${esc(j.error||'No error details were returned.')}</p></div>`:'');
+ setH(n.jpack,pp?`<div class="pack">
+   <div class="prow"><div class="prow-h"><div class="label">Title</div><button class="btn ghost sm" data-copy="title" data-id="${id}">Copy</button></div><p class="ttl">${esc(pp.title)}</p></div>
+   <div class="prow"><div class="prow-h"><div class="label">Caption</div><button class="btn ghost sm" data-copy="caption" data-id="${id}">Copy</button></div><p class="cap">${esc(pp.caption)}</p></div>
+   <div class="prow"><div class="prow-h"><div class="label">Hashtags</div><button class="btn ghost sm" data-copy="tags" data-id="${id}">Copy</button></div><p class="tags">${esc((pp.hashtags||[]).join(' '))}</p></div>
+  </div>
+  <div class="actions">${j.video_url?`<a class="btn" href="${esc(j.video_url)}" download>Download MP4</a>`:''}<button class="btn ghost" data-copy="all" data-id="${id}">Copy all</button></div>`:'')}
 
 function pipeline(jobs){if(OFFLINE){document.querySelectorAll('#steps .step').forEach(el=>{el.className='step';el.removeAttribute('aria-current')});$('pipeNow').textContent='Server unreachable';return}
  const a=jobs.find(j=>j.status==='running')||jobs.find(j=>j.status==='queued')||jobs[0];
@@ -427,11 +764,13 @@ function render(jobs){
  if(!jobs.length){for(const k in NODES)delete NODES[k];
   if(!box.querySelector('.empty'))box.innerHTML=`<div class="card empty"><div class="label">No jobs yet</div><h3>Your videos will appear here</h3><p>Pick an example to start, or type your own topic above and press Generate.</p><div class="ex">${['5 study habits that actually work','Why the moon looks bigger at the horizon','3 budgeting tips for first jobs'].map(t=>`<button class="btn ghost sm" data-topic="${esc(t)}">${esc(t)}</button>`).join('')}</div></div>`;return}
  box.querySelector('.empty')?.remove();
- const seen=new Set();
+ const seen=new Set(),fresh=[];
  jobs.forEach((j,i)=>{seen.add(j.id);const sig=JSON.stringify(j)+OFFLINE;let n=NODES[j.id];
-  if(!n){const el=document.createElement('article');n=NODES[j.id]={el,sig:''};el.dataset.id=j.id}
-  if(n.sig!==sig){n.el.className='card job'+(j.video_url?'':' compact')+(j.status==='failed'?' failed':'');n.el.innerHTML=card(j);n.sig=sig}   // only re-render cards that changed, so playing videos are not reset
+  if(!n){const el=document.createElement('article');n=NODES[j.id]={el,sig:'',quiet:true};el.dataset.id=j.id;el.className='card job nt';el.innerHTML=card(j);bind(n,j);fresh.push(n)}
+  if(n.sig!==sig){updateCard(n,j);n.sig=sig}   // one persistent node per job, updated in place, so animations and playing videos are never restarted
   if(box.children[i]!==n.el)box.insertBefore(n.el,box.children[i]||null)});
+ // new nodes render settled (no transitions or rises); animations are enabled after first paint
+ if(fresh.length)requestAnimationFrame(()=>requestAnimationFrame(()=>fresh.forEach(n=>{n.quiet=false;n.el.classList.remove('nt')})));
  for(const k in NODES)if(!seen.has(k)){NODES[k].el.remove();delete NODES[k]}}
 
 fetch('/health').then(r=>r.json()).then(h=>$('h').textContent=`LLM: ${h.llm} · images: ${h.image_provider} · workers: ${h.workers}${h.mock?' · MOCK MODE':''}`);
@@ -485,5 +824,51 @@ load();setInterval(load,2500);
   for(let k=0;k<6;k++){const b=document.createElement('i'),s=4+Math.random()*4,a=k/6*Math.PI*2+Math.random()*.6,d=26+Math.random()*22;
    b.className='gen-b';b.style.cssText=`width:${s}px;height:${s}px;left:${x-s/2}px;top:${y-s/2}px`;l.appendChild(b);
    b.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${Math.cos(a)*d}px,${Math.sin(a)*d}px) scale(1)`,opacity:1,offset:.45},{transform:'translate(0,0) scale(.3)',opacity:0}],{duration:600,easing:'cubic-bezier(.22,1,.36,1)'}).onfinish=()=>b.remove()}});
+})();
+</script>
+<script type="module">
+/* marketing sections: one IntersectionObserver for reveals, counters, ticker, pipeline line and the typewriter */
+(()=>{
+ const $=id=>document.getElementById(id),rm=matchMedia('(prefers-reduced-motion:reduce)').matches;
+ const tkG=document.querySelector('.tk-g');if(tkG)for(let i=0;i<3;i++)tkG.parentNode.appendChild(tkG.cloneNode(true));
+ const counters=[...document.querySelectorAll('[data-count]')];
+ function count(el){const to=+el.dataset.count,t0=performance.now();
+  const f=now=>{const p=Math.min(1,(now-t0)/1200);el.textContent=Math.round(to*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(f)};requestAnimationFrame(f)}
+ /* pipeline progress line */
+ const pp=$('pp'),cards=[...pp.querySelectorAll('.pc')];let ppVis=false,ppMax=0,ppRaf=0;
+ function ppSet(p){ppMax=Math.max(ppMax,p);pp.style.setProperty('--p',ppMax);cards.forEach((c,i)=>c.classList.toggle('lit',ppMax>=i/4+.05))}
+ function ppUpd(){ppRaf=0;if(!ppVis)return;const r=pp.getBoundingClientRect(),vh=innerHeight;ppSet(Math.max(0,Math.min(1,(vh*.8-r.top)/(r.height+vh*.2))))}
+ addEventListener('scroll',()=>{if(ppVis&&!ppRaf)ppRaf=requestAnimationFrame(ppUpd)},{passive:true});
+ /* typewriter */
+ const term=$('term'),typed=$('typed'),plans=[...term.querySelectorAll('.plan')],
+  TOPICS=['Why your first ten users will not come from ads','Build your first robot arm out of cardboard','Your microwave is a lesson in standing waves'];
+ let cur=0,termVis=false,started=false,waiters=[];
+ const live=()=>termVis&&!document.hidden;
+ function poke(){term.classList.toggle('live',live());if(!live())return;waiters.splice(0).forEach(f=>f());if(!started&&!rm){started=true;run()}}
+ document.addEventListener('visibilitychange',poke);
+ const step=async ms=>{await new Promise(r=>setTimeout(r,ms));if(!live())await new Promise(r=>waiters.push(r))};
+ async function run(){for(let i=0;;i=(i+1)%TOPICS.length){cur=i;plans.forEach((p,k)=>p.classList.toggle('cur',k===i));typed.textContent='';
+  for(const c of TOPICS[i]){typed.textContent+=c;await step(40)}
+  for(const li of plans[i].children){li.classList.add('on');await step(420)}
+  await step(1500);
+  for(const li of plans[i].children)li.classList.remove('on');
+  await step(350)}}
+ if(rm){[...plans[0].children].forEach(li=>li.classList.add('on'));counters.forEach(c=>{c.textContent=c.dataset.count});ppSet(1);document.querySelectorAll('.mk-ck').forEach(c=>c.classList.add('on'))}
+ else{typed.textContent='';counters.forEach(c=>{c.textContent='0'})}
+ /* shared observer */
+ const els=document.querySelectorAll('.mk-r,[data-count],.mk-ck,[data-k]');
+ if(!('IntersectionObserver' in window)||rm){els.forEach(el=>el.classList.add('in','on'));if(!rm){counters.forEach(c=>{c.textContent=c.dataset.count});ppSet(1)}}
+ else{const io=new IntersectionObserver(es=>es.forEach(e=>{const el=e.target,on=e.isIntersecting,k=el.dataset.k;
+  if(on){if(el.classList.contains('mk-r'))el.classList.add('in');if(el.classList.contains('mk-ck'))el.classList.add('on');if(el.dataset.count&&!el._c){el._c=1;count(el)}}
+  if(k==='tk')el.classList.toggle('off',!on);
+  else if(k==='term'){termVis=on;poke()}
+  else if(k==='pp'){ppVis=on;if(on)ppUpd();else if(e.boundingClientRect.top<0)ppSet(1)}
+  else if(on)io.unobserve(el)}),{threshold:.15});els.forEach(el=>io.observe(el))}
+ /* CTAs that fill or focus the topic input (never submit) */
+ function go(topic){const t=$('topic');if(topic!=null)t.value=topic;$('app').scrollIntoView({behavior:rm?'auto':'smooth',block:'start'});t.focus({preventScroll:true})}
+ document.addEventListener('click',e=>{
+  const b=e.target.closest('.tp');if(b){go(b.dataset.tp);return}
+  if(e.target.closest('#tryReal')){go(TOPICS[cur]);return}
+  if(e.target.closest('#mkGo')){e.preventDefault();go()}});
 })();
 </script></body></html>
