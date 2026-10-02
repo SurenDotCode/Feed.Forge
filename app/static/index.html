@@ -1,0 +1,231 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FeedForge · Qoneqt video pipeline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+ --bg:#F7F6F3;--card:#FFFFFF;--line:#E8E8E6;--ink:#1A1A1A;--mu:#6A6A6A;--gold:#A68B5B;
+ /* same gold, deepened only where it is small text on a light background, so it meets WCAG AA (5.3:1) */
+ --gold-tx:#7A6540;--gold-tint:#F4EFE6;
+ --ok:#2F6B45;--ok-bg:#EAF3EC;--bad:#A23B32;--bad-bg:#FBECEA;
+ --shadow:0 1px 2px rgba(26,26,26,.04),0 4px 14px rgba(26,26,26,.05);
+ --font:Inter,"Helvetica Neue",Helvetica,Arial,system-ui,sans-serif
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:var(--font);background:var(--bg);color:var(--ink);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1040px;margin:0 auto;padding:0 24px}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:4px}
+
+/* header */
+.top{border-bottom:1px solid var(--line);background:var(--bg)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:56px;flex-wrap:wrap;padding-top:10px;padding-bottom:10px}
+.wordmark{font-weight:800;letter-spacing:.18em;font-size:15px}
+.label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-tx)}
+
+/* hero */
+.hero{padding:56px 0 28px}
+.hero h1{margin:12px 0 10px;font-size:clamp(32px,5.4vw,54px);line-height:1.05;letter-spacing:-.025em;font-weight:800;max-width:20ch;text-wrap:balance}
+.hero p{margin:0;color:var(--mu);font-size:17px;max-width:60ch}
+
+/* cards */
+.card{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--gold);border-radius:12px;box-shadow:var(--shadow);padding:24px;margin-bottom:20px}
+.card h2{margin:6px 0 16px;font-size:20px;letter-spacing:-.01em}
+
+/* form */
+.field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+.row .grow{flex:1 1 320px}.row .narrow{flex:0 1 170px}
+input,textarea,select{width:100%;background:#fff;color:var(--ink);border:1px solid #CFCFCB;border-radius:8px;padding:11px 12px;font:inherit}
+input::placeholder,textarea::placeholder{color:#8A8A87}
+input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--gold);outline-offset:1px;border-color:var(--gold)}
+textarea{min-height:110px;resize:vertical}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--ink);color:#fff;border:1px solid var(--ink);border-radius:8px;padding:11px 20px;font:inherit;font-weight:600;cursor:pointer;text-decoration:none;transition:background .15s,color .15s,border-color .15s}
+.btn:hover{background:var(--gold);border-color:var(--gold);color:var(--ink)}
+.btn.ghost{background:#fff;color:var(--ink);border-color:#CFCFCB}
+.btn.ghost:hover{border-color:var(--gold);background:var(--gold-tint)}
+.btn.text{background:none;border-color:transparent;color:var(--ink);padding:11px 6px;text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--gold)}
+.btn.text:hover{color:var(--gold-tx)}
+.btn.sm{padding:8px 14px;font-size:14px}
+.actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:14px}
+#bt{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
+.meta{display:block;margin-top:14px;font-size:12px;color:var(--mu)}
+.msg{font-size:13px;color:var(--bad);font-weight:600}
+
+/* pipeline explainer (emphasis panel) */
+.pipe{background:var(--ink);color:#fff;border-radius:12px;padding:24px;margin-bottom:28px}
+.pipe .label{color:var(--gold)}
+.pipe-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline}
+.pipe-now{font-size:13px;color:#C9C9C6;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pipe-now b{color:#fff;font-weight:600}
+.steps{list-style:none;margin:18px 0 0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;counter-reset:s}
+.step{border-top:2px solid #3A3A3A;padding-top:12px;color:#9C9C99;counter-increment:s}
+.step::before{content:"0" counter(s);display:block;font-size:11px;font-weight:700;letter-spacing:.12em;margin-bottom:4px}
+.step b{display:block;font-size:16px;color:#D6D6D3;font-weight:700}
+.step span{font-size:13px}
+.step.complete{border-color:var(--gold)}.step.complete b{color:#fff}
+.step.current{border-color:var(--gold);color:#fff}.step.current::before{color:var(--gold)}.step.current b{color:var(--gold)}
+.step.current span::after{content:" · in progress"}
+.step.failed{border-color:#E07A70}.step.failed b{color:#F2A49C}.step.failed span::after{content:" · failed"}
+
+/* jobs */
+.section-head{display:flex;justify-content:space-between;align-items:baseline;margin:8px 0 14px}
+.job{display:grid;grid-template-columns:220px 1fr;gap:24px}
+.frame{aspect-ratio:9/16;border-radius:10px;overflow:hidden;background:#EFEEEA;border:1px solid var(--line)}
+.frame video{width:100%;height:100%;display:block;background:#000;object-fit:contain}
+.ph{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--mu);text-align:center;padding:14px;font-size:13px}
+.ph b{color:var(--ink);text-transform:capitalize;font-size:15px}
+.job h3{margin:6px 0 10px;font-size:20px;line-height:1.25;letter-spacing:-.01em;word-break:break-word}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:600;border:1px solid var(--line);background:#fff;color:var(--ink);text-transform:capitalize}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.pill.plain::before{display:none}.pill.plain{text-transform:none}
+.pill.queued{color:var(--mu)}
+.pill.running{color:var(--gold-tx);border-color:var(--gold);background:var(--gold-tint)}
+.pill.done,.pill.pass{color:var(--ok);background:var(--ok-bg);border-color:#C6DDCB}
+.pill.failed,.pill.fail{color:var(--bad);background:var(--bad-bg);border-color:#EDC4BF}
+.pill.warn{color:var(--gold-tx);border-color:var(--gold)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:12px;margin:0 0 16px;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.stats div{min-width:0}.stats dt{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mu)}
+.stats dd{margin:2px 0 0;font-size:15px;font-weight:600;text-transform:capitalize;font-variant-numeric:tabular-nums}
+.pack{margin:0 0 14px}
+.pack .ttl{font-weight:700;margin:4px 0}
+.pack .cap{margin:0 0 6px;white-space:pre-wrap}
+.pack .tags{margin:0;color:var(--gold-tx);font-size:14px;font-weight:500;word-break:break-word}
+.err{border:1px solid #EDC4BF;border-left:4px solid var(--bad);background:var(--bad-bg);border-radius:8px;padding:12px 14px;margin:0 0 14px}
+.err strong{display:block;color:var(--bad);font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+.err p{margin:4px 0 0;font-size:14px;word-break:break-word}
+details{margin-top:16px;border-top:1px solid var(--line);padding-top:10px}
+summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--ink);padding:4px 0;width:max-content;max-width:100%}
+summary:hover{color:var(--gold-tx)}
+pre{background:#FAFAF8;border:1px solid var(--line);border-radius:8px;padding:12px;max-height:220px;overflow:auto;font:12px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;color:#4A4A4A;white-space:pre-wrap;margin:8px 0 0}
+.empty{text-align:center;padding:48px 24px}
+.empty h3{margin:8px 0 6px;font-size:20px}.empty p{margin:0 auto;color:var(--mu);max-width:44ch}
+footer{color:var(--mu);font-size:12px;padding:24px 0 48px}
+
+@media(max-width:760px){
+ .wrap{padding:0 16px}
+ .hero{padding:36px 0 20px}
+ .card,.pipe{padding:18px}
+ .steps{grid-template-columns:repeat(2,1fr)}
+ .job{grid-template-columns:1fr}
+ .frame{max-width:280px;width:100%;margin:0 auto}
+ .frame.novid{max-width:none;aspect-ratio:auto;height:96px}
+ .row .narrow{flex:1 1 100%}
+ .actions .btn:not(.text){flex:1 1 auto}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body>
+<header class="top"><div class="wrap">
+ <div class="wordmark" aria-label="FeedForge">FEEDFORGE</div>
+ <div class="label">CTRL FREAK 2026 · QONEQT · TEAM OPTIMUS</div>
+</div></header>
+
+<main class="wrap">
+<section class="hero">
+ <div class="label">Qoneqt Global Feed · 9:16 video pipeline</div>
+ <h1>One topic in. One publish-ready video out.</h1>
+ <p>Type an idea, get a scripted, voiced, validated vertical video with caption and hashtags ready to post.</p>
+</section>
+
+<section class="card" aria-labelledby="gen-h">
+ <div class="label">01 · Create</div>
+ <h2 id="gen-h">Generate a video</h2>
+ <div class="row">
+  <div class="field grow"><label for="topic">Topic</label><input id="topic" placeholder="Topic, idea or trend (e.g. 5 study habits that actually work)" onkeydown="if(event.key==='Enter')one()"></div>
+  <div class="field narrow"><label for="scenes">Scenes</label><select id="scenes"><option value="">Auto</option><option>4</option><option>5</option><option>6</option></select></div>
+ </div>
+ <div class="actions">
+  <button class="btn" onclick="one()">Generate</button>
+  <button class="btn text" id="btToggle" aria-expanded="false" aria-controls="bt" onclick="toggleBatch()">Batch mode</button>
+  <span class="msg" id="msg" role="alert"></span>
+ </div>
+ <div id="bt" hidden>
+  <div class="field"><label for="topics">Batch topics <span style="color:var(--mu);font-weight:400">· one per line</span></label><textarea id="topics" placeholder="One topic per line"></textarea></div>
+  <div class="actions"><button class="btn ghost" onclick="batch()">Queue batch</button></div>
+ </div>
+ <small class="meta" id="h"></small>
+</section>
+
+<section class="pipe" aria-labelledby="pipe-h">
+ <div class="pipe-head"><div class="label" id="pipe-h">02 · Pipeline</div><div class="pipe-now" id="pipeNow">No active job</div></div>
+ <ol class="steps" id="steps">
+  <li class="step" data-stage="script"><b>Script</b><span>Topic to scene plan</span></li>
+  <li class="step" data-stage="generate"><b>Generate</b><span>Visuals + voice</span></li>
+  <li class="step" data-stage="compose"><b>Compose</b><span>Edit to 9:16 MP4</span></li>
+  <li class="step" data-stage="validate"><b>Validate</b><span>Quality gate</span></li>
+ </ol>
+</section>
+
+<section aria-labelledby="jobs-h">
+ <div class="section-head"><div class="label" id="jobs-h">03 · Jobs</div><small class="meta" id="count" style="margin:0"></small></div>
+ <div id="jobs" aria-live="polite"></div>
+</section>
+<footer>FeedForge · Team Optimus · CTRL FREAK 2026</footer>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+const STAGES=['script','generate','compose','validate'];
+function say(t){$('msg').textContent=t||''}
+function toggleBatch(){const b=$('bt'),open=b.hidden;b.hidden=!open;$('btToggle').setAttribute('aria-expanded',open);if(open)$('topics').focus()}
+async function one(){const t=$('topic').value.trim();if(t.length<3){say('Enter a topic of at least 3 characters.');$('topic').focus();return}say('');
+ const s=$('scenes').value;await fetch('/api/jobs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({topic:t,scenes:s?+s:null})});load()}
+async function batch(){const ts=$('topics').value.split('\n').map(x=>x.trim()).filter(x=>x.length>=3);
+ if(!ts.length){say('Add at least one topic (3+ characters) per line.');return}say('');
+ await fetch('/api/batch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({topics:ts})});load()}
+let CACHE={};
+function cp(id,btn){const p=CACHE[id];navigator.clipboard.writeText(p.caption+'\n'+(p.hashtags||[]).join(' ')).then(()=>{if(btn){const o=btn.textContent;btn.textContent='Copied';setTimeout(()=>btn.textContent=o,1400)}})}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+const OPEN={};const NODES={};
+function card(j){const q=j.quality,pp=j.publish_pack,deg=j.degraded_scenes&&j.degraded_scenes.length;
+ const media=j.video_url?`<video controls playsinline preload="metadata" src="${j.video_url}" aria-label="Video for ${esc(j.topic)}"></video>`
+  :`<div class="ph">${j.status==='failed'?'<b>No video</b>Generation failed':`<b>${esc(j.stage)}</b>${j.status==='queued'?'Waiting for a worker':'Working on it…'}`}</div>`;
+ return `<div class="frame${j.video_url?'':' novid'}">${media}</div>
+ <div>
+  <div class="label">Job ${esc(j.id)}</div>
+  <h3>${esc(j.topic)}</h3>
+  <div class="pills">
+   <span class="pill ${esc(j.status)}">${esc(j.status)}</span>
+   ${q?`<span class="pill ${q.passed?'pass':'fail'}">Quality gate ${q.passed?'passed':'failed'}</span>`:''}
+   ${deg?`<span class="pill warn plain">Fallback scenes: ${esc(j.degraded_scenes.join(', '))}</span>`:''}
+  </div>
+  <dl class="stats">
+   <div><dt>Stage</dt><dd>${esc(j.stage)}</dd></div>
+   <div><dt>Elapsed</dt><dd>${esc(j.elapsed_s)}s</dd></div>
+   <div><dt>Est. cost</dt><dd>$${esc(j.est_cost_usd)}</dd></div>
+  </dl>
+  ${j.error?`<div class="err" role="alert"><strong>Job failed</strong><p>${esc(j.error)}</p></div>`:''}
+  ${pp?`<div class="pack"><div class="label">Caption</div><p class="ttl">${esc(pp.title)}</p><p class="cap">${esc(pp.caption)}</p><p class="tags">${esc((pp.hashtags||[]).join(' '))}</p></div>
+  <div class="actions"><a class="btn" href="${j.video_url}" download>Download MP4</a><button class="btn ghost" onclick="cp('${esc(j.id)}',this)">Copy caption</button></div>`:''}
+  <details data-id="${esc(j.id)}" ${OPEN[j.id]?'open':''} ontoggle="OPEN[this.dataset.id]=this.open;if(this.open){const p=this.querySelector('pre');p.scrollTop=p.scrollHeight}">
+   <summary>Show pipeline log (${(j.logs||[]).length})</summary><pre>${esc((j.logs||[]).join('\n'))}</pre>
+  </details>
+ </div>`}
+
+function pipeline(jobs){const a=jobs.find(j=>j.status==='running')||jobs.find(j=>j.status==='queued')||jobs[0];
+ const idx=a?STAGES.indexOf(a.stage):-1;
+ document.querySelectorAll('#steps .step').forEach((el,i)=>{el.className='step';el.removeAttribute('aria-current');if(!a)return;
+  if(a.status==='done'||i<idx)el.classList.add('complete');
+  else if(i===idx){el.classList.add(a.status==='failed'?'failed':'current');el.setAttribute('aria-current','step')}});
+ $('pipeNow').innerHTML=a?`Tracking <b>${esc(a.topic)}</b> · ${esc(a.status)}`:'No active job'}
+
+async function load(){const r=await (await fetch('/api/jobs')).json();const jobs=r.jobs;
+ jobs.forEach(j=>{if(j.publish_pack)CACHE[j.id]=j.publish_pack});
+ pipeline(jobs);
+ $('count').textContent=jobs.length?`${jobs.length} job${jobs.length>1?'s':''}`:'';
+ const box=$('jobs');
+ if(!jobs.length){for(const k in NODES)delete NODES[k];
+  box.innerHTML=`<div class="card empty"><div class="label">No jobs yet</div><h3>Your videos will appear here</h3><p>Enter a topic above and press Generate, or queue several at once with Batch mode.</p></div>`;return}
+ box.querySelector('.empty')?.remove();
+ const seen=new Set();
+ jobs.forEach((j,i)=>{seen.add(j.id);const sig=JSON.stringify(j);let n=NODES[j.id];
+  if(!n){const el=document.createElement('article');el.className='card job';n=NODES[j.id]={el,sig:''}}
+  if(n.sig!==sig){n.el.innerHTML=card(j);n.sig=sig}   // only re-render cards that changed, so playing videos are not reset
+  if(box.children[i]!==n.el)box.insertBefore(n.el,box.children[i]||null)});
+ for(const k in NODES)if(!seen.has(k)){NODES[k].el.remove();delete NODES[k]}}
+
+fetch('/health').then(r=>r.json()).then(h=>$('h').textContent=`LLM: ${h.llm} · images: ${h.image_provider} · workers: ${h.workers}${h.mock?' · MOCK MODE':''}`);
+load();setInterval(load,2500);
+</script></body></html>
