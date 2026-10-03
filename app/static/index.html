@@ -2,6 +2,7 @@
 <title>FeedForge · Qoneqt video pipeline</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/fx.css">
 <style>
 :root{
  --bg:#1A1A1A;--bg-alt:#202020;--surface:#242424;--surface-2:#2C2C2C;--deep:#141414;
@@ -332,7 +333,8 @@ li[data-s=bad] .ic::after{transform:rotate(-45deg)}
 .tl-in details{margin:4px 12px 12px}
 .lp-sec,footer{content-visibility:auto;contain-intrinsic-size:auto 480px}
 /* marketing sections */
-.mk{padding:72px 0;content-visibility:auto;contain-intrinsic-size:auto 640px;background:var(--bg);border-top:1px solid var(--line)}
+.mk{padding:72px 0;background:var(--bg);border-top:1px solid var(--line)}
+.mk:not(#how){content-visibility:auto;contain-intrinsic-size:auto 640px}
 .mk[aria-labelledby=how-h],.mk[aria-labelledby=qg-h],.mk[aria-labelledby=ft-h],.mk-cta{background:var(--bg-alt)}
 .mk.ink{color:var(--text)}
 .mk.ink .label,.gap .label{color:var(--gold-text)}
@@ -355,24 +357,12 @@ li[data-s=bad] .ic::after{transform:rotate(-45deg)}
 .dm{flex:none;width:6px;height:6px;margin:0 24px;background:var(--gold);transform:rotate(45deg)}
 @keyframes tkm{to{transform:translateX(-50%)}}
 .tk:hover .tk-t,.tk:focus-within .tk-t,.tk.off .tk-t{animation-play-state:paused}
-/* pipeline */
-.pp{position:relative;padding-top:22px;--p:0}
-.pp-line{position:absolute;left:0;right:0;top:10px;height:2px;background:var(--line)}
-.pp-fill{position:absolute;inset:0;background:var(--gold);transform:scaleX(var(--p));transform-origin:left}
-.pp-g{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;list-style:none;margin:0;padding:0}
-.pc{position:relative;background:var(--deep);border:1px solid var(--line);border-radius:12px;padding:0 22px 24px}
-.pc-bar{position:relative;height:4px;margin:0 -22px 20px;background:#3A3A3A;border-radius:12px 12px 0 0;overflow:hidden}
-.pc-bar::after,.pc-node::after{content:"";position:absolute;background:var(--gold);transition:transform .5s cubic-bezier(.22,1,.36,1)}
-.pc-bar::after{inset:0;transform:scaleX(0);transform-origin:left}
-.pc-node{position:absolute;top:-17px;left:18px;width:12px;height:12px;border-radius:50%;background:var(--bg-alt);border:2px solid #4A4A4A}
-.pc-node::after{inset:-2px;border-radius:50%;transform:scale(0)}
-.pc.lit .pc-bar::after{transform:scaleX(1)}
-.pc.lit .pc-node::after{transform:scale(1)}
-.pc>:not(.pc-bar):not(.pc-node){opacity:.7;transition:opacity .5s cubic-bezier(.22,1,.36,1)}
-.pc.lit>:not(.pc-bar):not(.pc-node){opacity:1}
-.pc .n{font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--gold-text)}
-.pc h3{margin:6px 0 8px;font-size:20px;letter-spacing:-.01em;color:var(--text)}
-.pc p{margin:0;color:var(--muted);font-size:15px}
+/* pipeline stack */
+.stk{margin-top:8px}
+.stk-c{display:grid;grid-template-columns:auto 1fr;gap:34px;align-items:start;min-height:280px;padding:34px;background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--gold);border-radius:18px;margin-bottom:20px}
+.stk-n{font-size:clamp(72px,10vw,120px);font-weight:800;line-height:1;letter-spacing:-.03em;color:var(--gold-text);font-variant-numeric:tabular-nums}
+.stk-c h3{margin:6px 0 10px;font-size:clamp(24px,3vw,32px);letter-spacing:-.01em;color:var(--text)}
+.stk-c p{margin:0 0 18px;color:var(--muted);font-size:16px;max-width:52ch}
 /* example terminal */
 .term{max-width:780px;background:var(--deep);color:var(--text);border:1px solid var(--line);border-radius:12px;border-top:4px solid var(--gold);overflow:hidden}
 .term-h{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 18px;border-bottom:1px solid var(--line)}
@@ -394,7 +384,7 @@ li[data-s=bad] .ic::after{transform:rotate(-45deg)}
 .term-act{margin-top:20px}
 /* quality gate */
 .qg-sub{margin:-12px 0 28px;color:var(--muted);font-size:17px;max-width:52ch}
-.qg{display:grid;grid-template-columns:1fr auto;gap:48px;align-items:center}
+.qg{border-radius:12px;display:grid;grid-template-columns:1fr auto;gap:48px;align-items:center}
 .ck{list-style:none;margin:0;padding:0;display:grid;gap:12px}
 .ck li{display:flex;align-items:center;gap:12px;font-size:16px;color:var(--text)}
 .js .ck li{opacity:0;transition:opacity .35s cubic-bezier(.22,1,.36,1);transition-delay:calc(var(--i)*60ms)}
@@ -409,12 +399,10 @@ li[data-s=bad] .ic::after{transform:rotate(-45deg)}
 /* example topics */
 .tp-lab{margin:0 0 12px}
 .tpg{display:grid;gap:16px;grid-template-columns:repeat(5,1fr)}
-.tp{position:relative;display:flex;flex-direction:column;gap:6px;text-align:left;font:inherit;color:var(--text);background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--gold);border-radius:12px;padding:16px 16px 24px;cursor:pointer;transition:transform .35s cubic-bezier(.22,1,.36,1),background-color .2s}
+.tp{position:relative;display:flex;flex-direction:column;gap:6px;text-align:left;font:inherit;color:var(--text);background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--gold);border-radius:12px;padding:16px 16px 24px;cursor:pointer;border-radius:12px;overflow:hidden}
 .tp b{font-size:15px;line-height:1.25}
-.tp .h{font-size:14px;color:var(--muted)}
-.tp::after{content:"";position:absolute;left:16px;right:16px;bottom:12px;height:2px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .35s cubic-bezier(.22,1,.36,1)}
-.tp:hover,.tp:focus-visible{transform:translateY(-4px);background:var(--surface-2)}
-.tp:hover::after,.tp:focus-visible::after{transform:scaleX(1)}
+.tp [data-px-face]{display:flex;flex-direction:column;gap:6px;position:relative;z-index:1;text-shadow:0 1px 3px rgba(0,0,0,.75)}
+.tp .h{position:relative;z-index:1;font-size:14px;color:var(--text);text-shadow:0 1px 3px rgba(0,0,0,.75)}
 /* features */
 .mk-f{transition:transform .35s cubic-bezier(.22,1,.36,1)}
 .js .mk-r.in.mk-f:hover{transform:translateY(-3px)}
@@ -423,20 +411,16 @@ li[data-s=bad] .ic::after{transform:rotate(-45deg)}
 .card.dk p{color:var(--muted)}
 .big2 .cnt{display:inline-block;min-width:2ch;font-size:64px;font-weight:800;line-height:1.1;letter-spacing:-.03em;color:var(--gold-text);font-variant-numeric:tabular-nums}
 /* closing CTA */
+.mk-cta{border-radius:0}
 .mk-cta .lp-h2{margin-bottom:22px}
 .cta-row{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
 .mk-tl{color:var(--text);font-weight:600;text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--gold)}
 .mk-tl:hover{color:var(--gold-text)}
 @media(max-width:900px){
  .mk-g3{grid-template-columns:1fr}.mk-g6{grid-template-columns:repeat(2,1fr)}.tpg{grid-template-columns:repeat(3,1fr)}
- .pp{padding:0 0 0 30px}
- .pp-line{left:8px;right:auto;top:0;bottom:0;width:2px}
- .pp-fill{transform:scaleY(var(--p));transform-origin:top}
- .pp-g{grid-template-columns:1fr}
- .pc-node{top:22px;left:-27px}
 }
 @media(max-width:700px){.qg{grid-template-columns:1fr;gap:28px}.big{text-align:left}.term-p{min-height:calc(1.6em*3)}}
-@media(max-width:760px){.mk{padding:52px 0}}
+@media(max-width:760px){.mk{padding:52px 0}.stk-c{min-height:auto;padding:22px;gap:18px}}
 @media(max-width:560px){.mk-g6{grid-template-columns:1fr}.tpg{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:400px){.tpg{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){
@@ -497,14 +481,11 @@ li[data-s=bad] .ic::after{transform:rotate(-45deg)}
 <section class="mk ink" id="how" aria-labelledby="how-h"><div class="wrap">
  <div class="label mk-r">02 · THE PIPELINE</div>
  <h2 class="lp-h2 mk-r" id="how-h">Four stages. Zero hand-offs.</h2>
- <div class="pp" id="pp" data-k="pp">
-  <div class="pp-line" aria-hidden="true"><div class="pp-fill"></div></div>
-  <ol class="pp-g">
-   <li class="pc"><i class="pc-node" aria-hidden="true"></i><div class="pc-bar"></div><div class="n">01</div><h3>Script</h3><p>A structured scene plan: hook, scenes, narration and a visual prompt for every scene.</p></li>
-   <li class="pc"><i class="pc-node" aria-hidden="true"></i><div class="pc-bar"></div><div class="n">02</div><h3>Generate</h3><p>Visuals and voice are made scene by scene, in parallel. If a source fails, a fallback steps in.</p></li>
-   <li class="pc"><i class="pc-node" aria-hidden="true"></i><div class="pc-bar"></div><div class="n">03</div><h3>Compose</h3><p>Scenes cut to the narration, captions synced to the words, framed for 9:16.</p></li>
-   <li class="pc"><i class="pc-node" aria-hidden="true"></i><div class="pc-bar"></div><div class="n">04</div><h3>Validate</h3><p>Automated checks run before any video is marked ready.</p></li>
-  </ol>
+ <div class="stk" data-fx="stack">
+  <article class="stk-c"><div class="stk-n" aria-hidden="true">01</div><div><h3>Script</h3><p>A structured scene plan: hook, scenes, narration and a visual prompt for every scene.</p><span class="chip">Output: scene plan (JSON)</span></div></article>
+  <article class="stk-c"><div class="stk-n" aria-hidden="true">02</div><div><h3>Generate</h3><p>Visuals and voice are made scene by scene, in parallel. If a source fails, a fallback steps in.</p><span class="chip">Output: images and voiceover per scene</span></div></article>
+  <article class="stk-c"><div class="stk-n" aria-hidden="true">03</div><div><h3>Compose</h3><p>Scenes cut to the narration, captions synced to the words, framed for 9:16.</p><span class="chip">Output: 9:16 MP4 with captions</span></div></article>
+  <article class="stk-c"><div class="stk-n" aria-hidden="true">04</div><div><h3>Validate</h3><p>Automated checks run before any video is marked ready.</p><span class="chip">Output: pass or fail report</span></div></article>
  </div>
 </div></section>
 
@@ -547,7 +528,7 @@ li[data-s=bad] .ic::after{transform:rotate(-45deg)}
  <div class="label mk-r">04 · THE QUALITY GATE</div>
  <h2 class="lp-h2 mk-r" id="qg-h">Nothing ships until it passes.</h2>
  <p class="qg-sub mk-r">Every video is probed before it is marked ready. A fail comes with a reason, not a shrug.</p>
- <div class="qg">
+ <div class="qg" data-fx="glow">
   <ul class="ck mk-ck">
    <li style="--i:0"><span class="ck-t"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#A68B5B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>File is not empty</li>
    <li style="--i:1"><span class="ck-t"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#A68B5B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Video stream present</li>
@@ -566,11 +547,11 @@ li[data-s=bad] .ic::after{transform:rotate(-45deg)}
  <h2 class="lp-h2 mk-r" id="tp-h">Pick a topic. Make a loop.</h2>
  <div class="label mk-r tp-lab">Example hooks</div>
  <div class="tpg mk-r">
-  <button type="button" class="tp" data-tp="AI and Computer Science"><span class="label">01</span><b>AI and Computer Science</b><span class="h">You do not need a GPU to ship your first model.</span></button>
-  <button type="button" class="tp" data-tp="Physics"><span class="label">02</span><b>Physics</b><span class="h">Your microwave is a lesson in standing waves.</span></button>
-  <button type="button" class="tp" data-tp="College Admissions"><span class="label">03</span><b>College Admissions</b><span class="h">The essay is not about you. It is about one Tuesday.</span></button>
-  <button type="button" class="tp" data-tp="Startups"><span class="label">04</span><b>Startups</b><span class="h">Your first ten users will not come from ads.</span></button>
-  <button type="button" class="tp" data-tp="Robotics"><span class="label">05</span><b>Robotics</b><span class="h">Build your first arm out of cardboard. Seriously.</span></button>
+  <button type="button" class="tp" data-fx="pixel" data-tp="AI and Computer Science"><span data-px-face><span class="label">01</span><b>AI and Computer Science</b></span><span class="h" data-px-reveal>You do not need a GPU to ship your first model.</span></button>
+  <button type="button" class="tp" data-fx="pixel" data-tp="Physics"><span data-px-face><span class="label">02</span><b>Physics</b></span><span class="h" data-px-reveal>Your microwave is a lesson in standing waves.</span></button>
+  <button type="button" class="tp" data-fx="pixel" data-tp="College Admissions"><span data-px-face><span class="label">03</span><b>College Admissions</b></span><span class="h" data-px-reveal>The essay is not about you. It is about one Tuesday.</span></button>
+  <button type="button" class="tp" data-fx="pixel" data-tp="Startups"><span data-px-face><span class="label">04</span><b>Startups</b></span><span class="h" data-px-reveal>Your first ten users will not come from ads.</span></button>
+  <button type="button" class="tp" data-fx="pixel" data-tp="Robotics"><span data-px-face><span class="label">05</span><b>Robotics</b></span><span class="h" data-px-reveal>Build your first arm out of cardboard. Seriously.</span></button>
  </div>
 </div></section>
 
@@ -592,7 +573,7 @@ li[data-s=bad] .ic::after{transform:rotate(-45deg)}
  <div class="label">CTRL FREAK 2026 · QONEQT · TEAM OPTIMUS</div>
 </div></header>
 
-<section class="mk ink mk-cta" aria-labelledby="cta2-h"><div class="wrap">
+<section class="mk ink mk-cta" data-fx="glow" aria-labelledby="cta2-h"><div class="wrap">
  <h2 class="lp-h2 mk-r" id="cta2-h">Your next post is one topic away.</h2>
  <div class="cta-row mk-r"><a class="lp-btn" href="#/create" id="mkGo">Light the furnace</a><a class="mk-tl" href="#/jobs">See finished videos</a></div>
 </div></section>
@@ -606,11 +587,11 @@ li[data-s=bad] .ic::after{transform:rotate(-45deg)}
  <p>Type a topic. We script, voice, compose and check it.</p>
 </section>
 
-<section class="card" aria-labelledby="gen-h">
+<section class="card" data-fx="glow" aria-labelledby="gen-h">
  <div class="label">01 · Create</div>
  <h2 id="gen-h">Generate a video</h2>
  <div class="row">
-  <div class="field grow"><label for="topic">Topic</label><input id="topic" placeholder="Topic, idea or trend (e.g. 5 study habits that actually work)" onkeydown="if(event.key==='Enter')one()"></div>
+  <div class="field grow"><label for="topic">Topic</label><input id="topic" placeholder="Topic, idea or trend (e.g. 5 study habits that actually work)"></div>
   <div class="field narrow scn"><label for="scenes">Scenes</label>
    <div class="seg" id="segScenes" role="radiogroup" aria-label="Scenes"><span class="seg-goo" aria-hidden="true"><i class="seg-blob"></i><i class="seg-blob"></i></span>
     <button type="button" role="radio" aria-checked="true" tabindex="0" data-v="">Auto</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-v="4">4</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-v="5">5</button><button type="button" role="radio" aria-checked="false" tabindex="-1" data-v="6">6</button>
@@ -618,10 +599,11 @@ li[data-s=bad] .ic::after{transform:rotate(-45deg)}
    <select id="scenes" class="vh" tabindex="-1" aria-hidden="true"><option value="">Auto</option><option>4</option><option>5</option><option>6</option></select></div>
  </div>
  <div class="actions">
-  <button class="btn gen" onclick="one()"><span class="gen-goo" aria-hidden="true"><i class="gen-base"></i></span><span class="gen-lb">Generate</span></button>
+  <button class="btn gen" onclick="one()" data-fx="fuse" data-fuse-ms="5000" data-fuse-require="#topic" data-fuse-watch="#topic, #scenes" data-fuse-status="#fuse-status"><span class="gen-goo" aria-hidden="true"><i class="gen-base"></i></span><span class="gen-lb">Generate</span></button>
   <button class="btn text" id="btToggle" aria-expanded="false" aria-controls="bt" onclick="toggleBatch()">Batch mode</button>
   <span class="msg" id="msg" role="alert"></span>
  </div>
+ <p id="fuse-status" class="fuse-status" role="status" aria-live="polite"></p>
  <div id="bt" hidden>
   <div class="field"><label for="topics">Batch topics <span style="color:var(--muted);font-weight:400">· one per line</span></label><textarea id="topics" placeholder="One topic per line"></textarea></div>
   <div class="actions"><button class="btn ghost" onclick="batch()">Queue batch</button></div>
@@ -826,7 +808,7 @@ function render(jobs){
  box.querySelector('.empty')?.remove();
  const seen=new Set(),fresh=[];
  jobs.forEach((j,i)=>{seen.add(j.id);const sig=JSON.stringify(j)+OFFLINE;let n=NODES[j.id];
-  if(!n){const el=document.createElement('article');n=NODES[j.id]={el,sig:'',quiet:true};el.dataset.id=j.id;el.className='card job nt';el.innerHTML=card(j);bind(n,j);fresh.push(n)}
+  if(!n){const el=document.createElement('article');n=NODES[j.id]={el,sig:'',quiet:true};el.dataset.id=j.id;el.className='card job nt';el.dataset.fx='glow';el.innerHTML=card(j);bind(n,j);fresh.push(n)}
   if(n.sig!==sig){updateCard(n,j);n.sig=sig}   // one persistent node per job, updated in place, so animations and playing videos are never restarted
   if(box.children[i]!==n.el)box.insertBefore(n.el,box.children[i]||null)});
  // new nodes render settled (no transitions or rises); animations are enabled after first paint
@@ -848,6 +830,7 @@ load();setInterval(load,2500);
  function mount(){import('/static/hero-shader.js').then(m=>{Promise.resolve(m.mountHero(document.getElementById('hero'),{calm:'center'})).then(fx=>{heroFx=fx})}).catch(()=>{})}
  const idle=window.requestIdleCallback?(f=>requestIdleCallback(f,{timeout:300})):(f=>setTimeout(f,300));idle(mount);
  /* once the home view is displayed again (or on a home deep link), ask the shader to re-measure */
+ addEventListener('ffshown',()=>{window.__fx?.refresh()});
  addEventListener('ffshown',e=>{if(e.detail.view!=='home')return;const rf=()=>{if(heroFx)heroFx.refresh()};rf();requestAnimationFrame(rf);setTimeout(rf,300)});
  /* hero parallax + magnetic buttons: registered once, inert unless the hero is displayed and on screen */
  if(matchMedia('(hover:hover) and (pointer:fine)').matches&&!rm.matches){
@@ -886,7 +869,7 @@ load();setInterval(load,2500);
  sel.addEventListener('change',paint);paint();
  /* generate button blob burst */
  const gb=document.querySelector('.gen');
- gb.addEventListener('click',e=>{if(rm.matches||gb.disabled)return;const l=gb.querySelector('.gen-goo'),r=gb.getBoundingClientRect();
+ gb.addEventListener('click',e=>{if(rm.matches||gb.disabled||$('topic').value.trim().length<3)return;const l=gb.querySelector('.gen-goo'),r=gb.getBoundingClientRect();
   const x=e.detail?e.clientX-r.left:r.width/2,y=e.detail?e.clientY-r.top:r.height/2;
   for(let k=0;k<6;k++){const b=document.createElement('i'),s=4+Math.random()*4,a=k/6*Math.PI*2+Math.random()*.6,d=26+Math.random()*22;
    b.className='gen-b';b.style.cssText=`width:${s}px;height:${s}px;left:${x-s/2}px;top:${y-s/2}px`;l.appendChild(b);
@@ -894,18 +877,13 @@ load();setInterval(load,2500);
 })();
 </script>
 <script type="module">
-/* marketing sections: one IntersectionObserver for reveals, counters, ticker, pipeline line and the typewriter */
+/* marketing sections: one IntersectionObserver for reveals, counters, ticker and the typewriter */
 (()=>{
  const $=id=>document.getElementById(id),rm=matchMedia('(prefers-reduced-motion:reduce)').matches;
  const tkG=document.querySelector('.tk-g');if(tkG)for(let i=0;i<3;i++)tkG.parentNode.appendChild(tkG.cloneNode(true));
  const counters=[...document.querySelectorAll('[data-count]')];
  function count(el){const to=+el.dataset.count,t0=performance.now();
   const f=now=>{const p=Math.min(1,(now-t0)/1200);el.textContent=Math.round(to*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(f)};requestAnimationFrame(f)}
- /* pipeline progress line */
- const pp=$('pp'),cards=[...pp.querySelectorAll('.pc')];let ppVis=false,ppMax=0,ppRaf=0;
- function ppSet(p){ppMax=Math.max(ppMax,p);pp.style.setProperty('--p',ppMax);cards.forEach((c,i)=>c.classList.toggle('lit',ppMax>=i/4+.05))}
- function ppUpd(){ppRaf=0;if(!ppVis)return;const r=pp.getBoundingClientRect(),vh=innerHeight;ppSet(Math.max(0,Math.min(1,(vh*.8-r.top)/(r.height+vh*.2))))}
- addEventListener('scroll',()=>{if(ppVis&&!ppRaf)ppRaf=requestAnimationFrame(ppUpd)},{passive:true});
  /* typewriter */
  const term=$('term'),typed=$('typed'),plans=[...term.querySelectorAll('.plan')],
   TOPICS=['Why your first ten users will not come from ads','Build your first robot arm out of cardboard','Your microwave is a lesson in standing waves'];
@@ -920,16 +898,15 @@ load();setInterval(load,2500);
   await step(1500);
   for(const li of plans[i].children)li.classList.remove('on');
   await step(350)}}
- if(rm){[...plans[0].children].forEach(li=>li.classList.add('on'));counters.forEach(c=>{c.textContent=c.dataset.count});ppSet(1);document.querySelectorAll('.mk-ck').forEach(c=>c.classList.add('on'))}
+ if(rm){[...plans[0].children].forEach(li=>li.classList.add('on'));counters.forEach(c=>{c.textContent=c.dataset.count});document.querySelectorAll('.mk-ck').forEach(c=>c.classList.add('on'))}
  else{typed.textContent='';counters.forEach(c=>{c.textContent='0'})}
  /* shared observer */
  const els=document.querySelectorAll('.mk-r,[data-count],.mk-ck,[data-k]');
- if(!('IntersectionObserver' in window)||rm){els.forEach(el=>el.classList.add('in','on'));if(!rm){counters.forEach(c=>{c.textContent=c.dataset.count});ppSet(1)}}
+ if(!('IntersectionObserver' in window)||rm){els.forEach(el=>el.classList.add('in','on'));if(!rm){counters.forEach(c=>{c.textContent=c.dataset.count})}}
  else{const io=new IntersectionObserver(es=>es.forEach(e=>{const el=e.target,on=e.isIntersecting,k=el.dataset.k;
   if(on){if(el.classList.contains('mk-r'))el.classList.add('in');if(el.classList.contains('mk-ck'))el.classList.add('on');if(el.dataset.count&&!el._c){el._c=1;count(el)}}
   if(k==='tk')el.classList.toggle('off',!on);
   else if(k==='term'){termVis=on;poke()}
-  else if(k==='pp'){ppVis=on;if(on)ppUpd();else if(e.boundingClientRect.top<0)ppSet(1)}
   else if(on)io.unobserve(el)}),{threshold:.15});els.forEach(el=>io.observe(el))}
  /* CTAs that fill or focus the topic input (never submit) */
  async function go(topic){const t=$('topic');if(topic!=null)t.value=topic;await window.ffNav.go('/create');t.focus({preventScroll:true})}
@@ -997,4 +974,5 @@ load();setInterval(load,2500);
  apply();
 })();
 </script>
+<script type="module" src="/static/fx.js"></script>
 </body></html>

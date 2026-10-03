@@ -1,5 +1,5 @@
 // FeedForge fx.js : border glow, pixel card, scroll stack in vanilla JS (no libraries).
-// Mark elements with data-fx="glow" | "pixel" | "stack". New elements added later (e.g. job cards) are picked up automatically.
+// Mark elements with data-fx="glow" | "pixel" | "stack" | "fuse" (undo-window button, see fx.css). New elements added later (e.g. job cards) are picked up automatically.
 // Pixel card: put data-px-face on the always-visible text and data-px-reveal on the text revealed on hover/focus.
 // Scroll stack: put data-fx="stack" on a container; its direct children become the stacked cards.
 // Router hook: call window.__fx.refresh() after a view becomes visible again (optional, it also self-heals).
@@ -125,12 +125,89 @@ function initStack(el) {
 addEventListener('scroll', stackSched, { passive: true });
 addEventListener('resize', stackSched);
 
+
+/* ---------------- fuse button ---------------- */
+function initFuse(btn) {
+  if (btn.__fuse) return; btn.__fuse = true;
+  const MS = +btn.dataset.fuseMs || 5000;
+  const watchSel = btn.dataset.fuseWatch || '', reqSel = btn.dataset.fuseRequire || '';
+  const status = btn.dataset.fuseStatus ? document.querySelector(btn.dataset.fuseStatus) : null;
+  const ui = document.createElement('span'); ui.className = 'fuse-ui'; ui.setAttribute('aria-hidden', 'true');
+  ui.innerHTML = '<span class="fuse-label">Undo</span><span class="fuse-count"></span><span class="fuse-line"><i class="fuse-burn"></i><b class="fuse-spark"></b></span>';
+  btn.appendChild(ui);
+  const count = ui.querySelector('.fuse-count');
+  let burning = false, deadline = 0, left = MS, raf = 0, bypass = false, clearT = 0, lastSec = -1;
+  const say = (t, ms = 0) => { if (!status) return; status.textContent = t; clearTimeout(clearT); if (ms) clearT = setTimeout(() => { status.textContent = ''; }, ms); };
+  const valid = () => { if (!reqSel) return true; const i = document.querySelector(reqSel); return !!i && i.value.trim().length >= 3; };
+  const watched = (t) => !!watchSel && !!t.closest && !!t.closest(watchSel);
+  const paint = (rem) => {
+    const p = Math.max(0, rem / MS); ui.style.setProperty('--p', p.toFixed(4));
+    const s = Math.ceil(rem / 1000); if (s !== lastSec) { lastSec = s; count.textContent = s + 's'; }
+  };
+  const tick = () => {
+    if (!burning) return;
+    const rem = deadline - performance.now(); paint(rem);
+    if (rem <= 0) { commit(); return; }
+    raf = requestAnimationFrame(tick);
+  };
+  const arm = () => { deadline = performance.now() + MS; lastSec = -1; paint(MS); cancelAnimationFrame(raf); raf = requestAnimationFrame(tick); };
+  function start() {
+    burning = true; btn.classList.add('is-fuse');
+    btn.setAttribute('aria-label', 'Undo. Video generation starts in ' + Math.round(MS / 1000) + ' seconds. Press Escape to cancel.');
+    say('Starting in ' + Math.round(MS / 1000) + 's. Edit your topic to restart the timer, or press Esc to undo.');
+    arm();
+  }
+  function restart() { say('You edited the topic, so the timer restarted. Starting in ' + Math.round(MS / 1000) + 's. Press Esc to undo.'); arm(); }
+  function end() { burning = false; cancelAnimationFrame(raf); btn.classList.remove('is-fuse'); btn.removeAttribute('aria-label'); }
+  function cancel(why) {
+    if (!burning) return; end();
+    if (why === 'undo') say('Undone. Nothing was started. Edit your topic and press Generate when ready.', 6000);
+    else if (why === 'invalid') say('The topic is too short, so the timer was cancelled.', 6000);
+    else say('');
+  }
+  function commit() {
+    end(); say('Starting now.', 2500);
+    const r = btn.getBoundingClientRect();
+    bypass = true;
+    try { btn.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window, clientX: r.left + r.width / 2, clientY: r.top + r.height / 2 })); }
+    finally { bypass = false; }
+  }
+  // the first click on the button lights the fuse; the next click is Undo. Runs before any other click handler.
+  document.addEventListener('click', (e) => {
+    if (bypass || !e.target.closest || e.target.closest('[data-fx~="fuse"]') !== btn) return;
+    if (btn.disabled) return;
+    if (burning) { e.preventDefault(); e.stopImmediatePropagation(); cancel('undo'); return; }
+    if (!valid()) return;                           // let the page show its own "enter a topic" message
+    e.preventDefault(); e.stopImmediatePropagation(); start();
+  }, true);
+  // Enter in the topic field acts like pressing the button
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && burning) { e.preventDefault(); cancel('undo'); return; }
+    if (e.key !== 'Enter' || e.isComposing || bypass || !reqSel || !e.target.matches || !e.target.matches(reqSel)) return;
+    if (burning) { e.preventDefault(); e.stopImmediatePropagation(); return; }
+    if (!valid() || btn.disabled) return;
+    e.preventDefault(); e.stopImmediatePropagation(); start();
+  }, true);
+  // editing the topic or the scene count while the fuse burns relights it, so what runs is what is on screen
+  const onEdit = (e) => { if (!burning || !watched(e.target)) return; if (!valid()) cancel('invalid'); else restart(); };
+  document.addEventListener('input', onEdit); document.addEventListener('change', onEdit);
+  // never start anything behind the user's back
+  addEventListener('hashchange', () => cancel('left')); addEventListener('pagehide', () => cancel('left'));
+  document.addEventListener('visibilitychange', () => {
+    if (!burning) return;
+    if (document.hidden) { left = deadline - performance.now(); cancelAnimationFrame(raf); }
+    else { deadline = performance.now() + Math.max(left, 800); raf = requestAnimationFrame(tick); }
+  });
+  btn.__fuseApi = { cancel: () => cancel('undo'), isBurning: () => burning };
+}
+
 /* ---------------- boot + auto-pickup of new elements ---------------- */
 function initOne(el) {
   const k = el.getAttribute('data-fx') || '';
   if (k.includes('glow')) initGlow(el);
   if (k.includes('pixel')) initPixel(el);
   if (k.includes('stack')) initStack(el);
+  if (k.includes('fuse')) initFuse(el);
 }
 function scan(root = document) {
   if (root.matches && root.matches('[data-fx]')) initOne(root);
