@@ -575,9 +575,9 @@ li[data-s=bad] .ic::after{transform:rotate(-45deg)}
 <div id="view-create" data-view="create" hidden>
 <main class="wrap" id="app">
 <section class="hero">
- <div class="label">Qoneqt Global Feed · 9:16 video pipeline</div>
- <h1>One topic in. One publish-ready video out.</h1>
- <p>Type an idea, get a scripted, voiced, validated vertical video with caption and hashtags ready to post.</p>
+ <div class="label">CREATE</div>
+ <h2 class="lp-h2">Make your next video</h2>
+ <p>Type a topic. We script, voice, compose and check it.</p>
 </section>
 
 <section class="card" aria-labelledby="gen-h">
@@ -925,7 +925,7 @@ load();setInterval(load,2500);
  const ROUTES={'/':'home','/how':'home','/create':'create','/jobs':'create'},ORDER={home:0,create:1},
   TITLE={home:'FeedForge | Home',create:'FeedForge | Create'},
   views={home:$('view-home'),create:$('view-create')},
-  HEAD={home:()=>$('lp-h1'),create:()=>document.querySelector('#app .hero h1')};
+  HEAD={home:()=>$('lp-h1'),create:()=>document.querySelector('#app .hero h2')};
  let cur=null,busy=false,waiters=[];
  const sleep=ms=>new Promise(r=>setTimeout(r,ms));
  function parse(){const h=location.hash.replace(/^#/,'');
