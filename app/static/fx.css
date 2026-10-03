@@ -1,0 +1,59 @@
+/* FeedForge fx.css : vanilla versions of three effects (border glow, pixel card, scroll stack). No libraries. */
+
+/* ============ BORDER GLOW  ([data-fx~="glow"]) ============ */
+[data-fx~="glow"]{--ga:45deg;--gx:50%;--gy:50%;--gi:0;position:relative;isolation:isolate}
+[data-fx~="glow"]::before,[data-fx~="glow"]::after{
+  content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;padding:1.5px;
+  background:
+    radial-gradient(190px circle at var(--gx) var(--gy), rgba(247,246,243,.95), rgba(196,168,116,.6) 38%, transparent 72%),
+    conic-gradient(from calc(var(--ga) - 70deg), transparent 0deg, rgba(166,139,91,0) 6deg, rgba(166,139,91,.85) 50deg,
+      rgba(241,228,196,1) 70deg, rgba(166,139,91,.85) 90deg, transparent 134deg, transparent 360deg);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;
+  opacity:var(--gi);transition:opacity .25s ease;
+}
+[data-fx~="glow"]::before{z-index:2}
+[data-fx~="glow"]::after{z-index:1;padding:6px;filter:blur(12px);opacity:calc(var(--gi) * 1)}
+@media (hover:none),(prefers-reduced-motion:reduce){[data-fx~="glow"]{--gi:.38}}
+
+/* ============ PIXEL CARD  ([data-fx~="pixel"]) ============ */
+[data-fx~="pixel"]{position:relative;overflow:hidden;isolation:isolate;cursor:pointer}
+[data-fx~="pixel"] .fx-px{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+[data-fx~="pixel"]>*:not(.fx-px){position:relative;z-index:1}
+[data-fx~="pixel"] [data-px-face]{transition:opacity .35s ease,transform .45s cubic-bezier(.22,1,.36,1)}
+[data-fx~="pixel"] [data-px-reveal]{opacity:0;transform:translateY(8px);transition:opacity .35s ease .08s,transform .5s cubic-bezier(.22,1,.36,1) .08s}
+[data-fx~="pixel"].px-on [data-px-face]{opacity:.9;transform:translateY(-3px)}
+[data-fx~="pixel"].px-on [data-px-reveal]{opacity:1;transform:none}
+@media (hover:none){[data-fx~="pixel"] [data-px-reveal]{opacity:1;transform:none}[data-fx~="pixel"] .fx-px{display:none}}
+@media (prefers-reduced-motion:reduce){[data-fx~="pixel"] [data-px-face],[data-fx~="pixel"] [data-px-reveal]{transition:none}}
+
+/* ============ SCROLL STACK  ([data-fx~="stack"]) ============ */
+[data-fx~="stack"]{--stack-top:104px;--stack-gap:26px;--stack-space:56px;position:relative;padding-bottom:10vh}
+[data-fx~="stack"]>.fx-stack-card{
+  position:sticky;top:calc(var(--stack-top) + var(--i) * var(--stack-gap));
+  margin-bottom:var(--stack-space);transform-origin:50% 0;will-change:transform;
+}
+[data-fx~="stack"]>.fx-stack-card>.fx-dim{position:absolute;inset:0;border-radius:inherit;background:#000;opacity:var(--dim,0);pointer-events:none;z-index:5}
+@media (max-width:700px){[data-fx~="stack"]{--stack-top:84px;--stack-gap:16px;--stack-space:32px}}
+
+/* ============ FUSE BUTTON  ([data-fx~="fuse"]) ============
+   Press: label crossfades to "Undo", a hairline burns for the undo window, Undo / Escape cancels, edits relight it.
+   Attributes: data-fuse-ms (default 5000), data-fuse-watch (selectors of inputs whose edits relight the fuse),
+               data-fuse-require (selector of the topic input; fuse only starts when it has 3+ characters),
+               data-fuse-status (selector of a role="status" element for the instructions text). */
+[data-fx~="fuse"]{position:relative}
+[data-fx~="fuse"]>*:not(.fuse-ui){transition:opacity .22s ease}
+[data-fx~="fuse"].is-fuse>*:not(.fuse-ui):not(.fuse-ring){opacity:0}
+.fuse-ui{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:10px;overflow:hidden;
+  background:#111;color:#e2c98f;border:1px solid rgba(166,139,91,.4);border-radius:inherit;font:inherit;font-weight:700;
+  opacity:0;filter:blur(5px);pointer-events:none;transition:opacity .25s ease,filter .25s ease}
+.is-fuse>.fuse-ui{opacity:1;filter:none}
+.fuse-count{font-variant-numeric:tabular-nums;font-weight:600;font-size:.85em;color:#b5b0a5;min-width:1.6em;text-align:left}
+.fuse-ring{position:absolute;overflow:visible;pointer-events:none;opacity:0;transition:opacity .2s ease}
+.is-fuse>.fuse-ring{opacity:1}
+.fuse-track{fill:none;stroke:rgba(166,139,91,.22);stroke-width:2}
+.fuse-burn-path{fill:none;stroke:#e2c98f;stroke-width:2.6;stroke-linecap:round;filter:drop-shadow(0 0 3px rgba(241,228,196,.55))}
+.fuse-spark-dot{fill:#fff6dd;filter:drop-shadow(0 0 5px rgba(241,228,196,.95));animation:fuse-flick .14s steps(2) infinite}
+@keyframes fuse-flick{50%{opacity:.7}}
+.fuse-status{min-height:1.4em;margin:10px 0 0;font-size:13px;line-height:1.4;color:#b5b0a5}
+@media (prefers-reduced-motion:reduce){.fuse-spark-dot{animation:none}.fuse-ui{transition:none;filter:none}}

@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>FeedForge hero reference (centered)</title>
+<!--
+  REFERENCE ONLY. Port this hero (markup + CSS + the small script at the bottom) into index.html's #hero.
+  Keep the real nav, ids, routes and button handlers from index.html: this file only shows the layout and effects.
+-->
+<style>
+:root{--font:Inter,Helvetica,Arial,sans-serif;--bg:#1a1a1a;--text:#f7f6f3;--muted:#b5b0a5;--gold:#a68b5b;--gold-text:#c4a874;--gold-ink:#111;--line:rgba(247,246,243,.14)}
+*{box-sizing:border-box}html,body{margin:0}body{background:var(--bg);color:var(--text);font-family:var(--font)}
+/* fake nav pill, only so the reference shows real top spacing */
+.nav-ref{position:fixed;top:14px;left:50%;translate:-50% 0;z-index:20;display:flex;gap:26px;align-items:center;padding:12px 22px;border:1px solid var(--line);border-radius:999px;background:rgba(26,26,26,.85);font-weight:700;font-size:15px}
+.nav-ref b{letter-spacing:.2em}.nav-ref .g{background:var(--gold);color:var(--gold-ink);padding:10px 20px;border-radius:999px}
+
+#hero{position:relative;min-height:100svh;overflow:hidden;background:var(--bg);display:grid;place-items:center;padding:120px 6vw 150px;isolation:isolate}
+.hero-fade{position:absolute;left:0;right:0;bottom:0;height:180px;background:linear-gradient(to bottom,transparent,var(--bg));z-index:1;pointer-events:none}
+.hero-inner{position:relative;z-index:3;text-align:center;max-width:min(1500px,94vw);pointer-events:none}
+.hero-inner a,.hero-inner button{pointer-events:auto}
+.hero-label{color:var(--gold-text);font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;opacity:0;animation:fade .8s ease .1s forwards}
+.hero-title{margin:20px 0 38px;font-weight:800;letter-spacing:-.03em;line-height:1.02;font-size:clamp(36px,5.6vw,92px);text-wrap:balance}
+.hero-title .line{display:block}
+.w{display:inline-block;overflow:hidden;vertical-align:top;padding:0 .02em .1em}
+.w>i{display:inline-block;font-style:normal;transform:translateY(108%);animation:rise 1s cubic-bezier(.22,1,.36,1) forwards;animation-delay:calc(var(--d) * 85ms + 180ms)}
+.gold>i{background:linear-gradient(100deg,#a68b5b 28%,#f6ead0 46%,#a68b5b 64%) 0 0/260% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:rise 1s cubic-bezier(.22,1,.36,1) forwards,sheen 5.5s linear 1.6s infinite;animation-delay:calc(var(--d) * 85ms + 180ms),1.6s}
+@keyframes rise{to{transform:none}}@keyframes sheen{to{background-position:-160% 0}}@keyframes fade{to{opacity:1}}
+.cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;opacity:0;animation:fade .8s ease 1s forwards}
+.btn{display:inline-block;font-family:var(--font);font-weight:700;font-size:17px;line-height:1;padding:18px 28px;border-radius:10px;text-decoration:none;transition:transform .2s ease,background .2s ease;will-change:transform}
+.btn.p{background:var(--gold);color:var(--gold-ink)}.btn.p:hover{background:#b89c69}
+.btn.o{border:1px solid rgba(255,255,255,.35);color:var(--text)}.btn.o:hover{background:rgba(255,255,255,.08)}
+
+/* floating 9:16 sample frames (decorative) */
+.frames{position:absolute;inset:0;z-index:2;pointer-events:none;translate:calc(var(--mx,0) * -16px) calc(var(--my,0) * -10px);transition:translate .25s ease-out}
+.fr{position:absolute;width:clamp(96px,8.4vw,140px);aspect-ratio:9/16;border-radius:16px;background:#202020;border:1px solid var(--line);overflow:hidden;
+  box-shadow:0 30px 60px rgba(0,0,0,.5);rotate:var(--r);animation:float 7s ease-in-out infinite;animation-delay:var(--fd);opacity:0;animation-fill-mode:both}
+.fr.show{opacity:1}
+.fr .chip{position:absolute;top:9px;left:9px;font:700 8px/1 var(--font);letter-spacing:.14em;color:var(--gold-text);z-index:2}
+.fr .img{position:absolute;inset:0;background:radial-gradient(circle at 30% 35%,rgba(166,139,91,.28),transparent 55%),repeating-radial-gradient(circle at 70% 60%,rgba(196,168,116,.5) 0 1px,transparent 1px 9px);-webkit-mask:linear-gradient(#000 55%,transparent);mask:linear-gradient(#000 55%,transparent)}
+.fr .cap{position:absolute;left:8px;right:8px;bottom:18px;font:800 11px/1.25 var(--font);text-align:center;color:#fff;text-shadow:0 1px 3px #000}
+.fr .cap b{font-weight:800;animation:hl 3.4s linear infinite;animation-delay:calc(var(--k) * .55s)}
+@keyframes hl{0%,28%,100%{color:#fff}8%,20%{color:#e2c98f}}
+.fr .scrub{position:absolute;left:8px;right:8px;bottom:8px;height:3px;background:rgba(255,255,255,.18);border-radius:3px;overflow:hidden}
+.fr .scrub i{display:block;height:100%;width:0;background:var(--gold);animation:scrub 6.5s linear infinite;animation-delay:var(--fd)}
+@keyframes scrub{to{width:100%}}
+@keyframes float{0%,100%{translate:0 0}50%{translate:0 -12px}}
+.fr.a{--r:-7deg;--fd:0s;left:5.5vw;top:13%}.fr.b{--r:5deg;--fd:-2.3s;left:13vw;bottom:15%}
+.fr.c{--r:7deg;--fd:-1.1s;right:5.5vw;top:13%}.fr.d{--r:-5deg;--fd:-3.4s;right:13vw;bottom:15%}
+
+/* pipeline rail */
+.rail{position:absolute;z-index:3;left:50%;bottom:36px;translate:-50% 0;display:flex;align-items:center;gap:14px;font:700 11px/1 var(--font);letter-spacing:.16em;color:var(--gold-text);white-space:nowrap;opacity:0;animation:fade .8s ease 1.3s forwards}
+.rail i{display:block;width:clamp(20px,3.6vw,54px);height:1px;background:linear-gradient(90deg,transparent,#e2c98f 50%,transparent) 0 0/200% 100% no-repeat,rgba(247,246,243,.2);animation:run 2.6s linear infinite;animation-delay:calc(var(--k) * .32s)}
+@keyframes run{from{background-position:200% 0}to{background-position:-100% 0}}
+@media (min-width:701px){.hero-title .line{white-space:nowrap}}
+@media (max-width:1100px){.fr{display:none}}
+@media (max-width:700px){.rail{display:none}#hero{padding:110px 6vw 90px}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.w>i,.cta,.hero-label,.rail,.fr{transform:none!important;opacity:1!important}}
+</style></head>
+<body>
+<div class="nav-ref"><b>FEEDFORGE</b><span>How it works</span><span class="g">Start creating</span></div>
+<section id="hero">
+  <div class="frames" aria-hidden="true">
+    <div class="fr a show"><span class="chip">SCENE 01</span><div class="img"></div><div class="cap"><b style="--k:0">your</b> <b style="--k:1">first</b> <b style="--k:2">ten</b> <b style="--k:3">users</b></div><div class="scrub"><i></i></div></div>
+    <div class="fr b show"><span class="chip">SCENE 02</span><div class="img"></div><div class="cap"><b style="--k:0">build</b> <b style="--k:1">one</b> <b style="--k:2">arm</b></div><div class="scrub"><i></i></div></div>
+    <div class="fr c show"><span class="chip">SCENE 03</span><div class="img"></div><div class="cap"><b style="--k:0">one</b> <b style="--k:1">simple</b> <b style="--k:2">idea</b></div><div class="scrub"><i></i></div></div>
+    <div class="fr d show"><span class="chip">SCENE 04</span><div class="img"></div><div class="cap"><b style="--k:0">join</b> <b style="--k:1">the</b> <b style="--k:2">loop</b></div><div class="scrub"><i></i></div></div>
+  </div>
+  <div class="hero-inner">
+    <div class="hero-label">Qoneqt Global Feed · AI Video Pipeline</div>
+    <h1 class="hero-title">
+      <span class="line"><span class="w"><i style="--d:0">One</i></span> <span class="w"><i style="--d:1">topic</i></span> <span class="w"><i style="--d:2">in.</i></span></span>
+      <span class="line"><span class="w"><i style="--d:3">One</i></span> <span class="w"><i style="--d:4">publish-ready</i></span> <span class="w gold"><i style="--d:5">video</i></span> <span class="w gold"><i style="--d:6">out.</i></span></span>
+    </h1>
+    <div class="cta"><a class="btn p mag" href="#/create">Start creating</a><a class="btn o mag" href="#/how">See how it works</a></div>
+  </div>
+  <div class="rail" aria-hidden="true"><span>TOPIC</span><i style="--k:0"></i><span>SCRIPT</span><i style="--k:1"></i><span>VOICE</span><i style="--k:2"></i><span>VISUALS</span><i style="--k:3"></i><span>CAPTIONS</span><i style="--k:4"></i><span>9:16 MP4</span></div>
+  <div class="hero-fade"></div>
+</section>
+<div style="height:70vh;background:#202020"></div>
+<script type="module">
+  // (1) shader background, centered calm zone
+  import { mountHero } from '/static/hero-shader.js';
+  window.heroFx = await mountHero(document.getElementById('hero'), { calm: 'center' });
+  // (2) mouse parallax for the sample frames + magnetic buttons (small, no libraries)
+  const hero = document.getElementById('hero');
+  const fine = matchMedia('(hover:hover) and (pointer:fine)').matches, calm = matchMedia('(prefers-reduced-motion:reduce)').matches;
+  if (fine && !calm) {
+    addEventListener('pointermove', (e) => {
+      const r = hero.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return;
+      hero.style.setProperty('--mx', ((e.clientX / innerWidth) * 2 - 1).toFixed(3));
+      hero.style.setProperty('--my', ((e.clientY / innerHeight) * 2 - 1).toFixed(3));
+      document.querySelectorAll('.mag').forEach((b) => {
+        const br = b.getBoundingClientRect(), dx = e.clientX - (br.left + br.width / 2), dy = e.clientY - (br.top + br.height / 2), d = Math.hypot(dx, dy);
+        b.style.transform = d < 110 ? `translate(${(dx * .18).toFixed(1)}px,${(dy * .25).toFixed(1)}px)` : '';
+      });
+    }, { passive: true });
+  }
+  window.ready = true;
+</script></body></html>

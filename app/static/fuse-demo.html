@@ -1,0 +1,33 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="/static/fx.css">
+<style>
+:root{--font:Inter,Helvetica,Arial,sans-serif}*{box-sizing:border-box}body{margin:0;background:#1a1a1a;color:#f7f6f3;font-family:var(--font);padding:60px}
+.card{width:620px;background:#242424;border:1px solid rgba(247,246,243,.12);border-radius:14px;padding:26px;border-top:4px solid #a68b5b}
+input{width:100%;padding:14px;border-radius:10px;border:1px solid rgba(247,246,243,.2);background:#2c2c2c;color:#fff;font:inherit}
+.row{display:flex;gap:16px;align-items:center;margin-top:16px}
+.gen{position:relative;padding:18px 34px;border:0;border-radius:10px;background:#a68b5b;color:#111;font:700 17px var(--font);cursor:pointer;min-width:150px}
+.err{color:#f0867e;font-size:13px;min-height:18px;margin-top:8px}
+</style></head><body>
+<div class="card">
+  <label for="topic">Topic</label><br><br>
+  <input id="topic" placeholder="Topic, idea or trend" value="">
+  <select id="scenes" style="margin-top:12px"><option value="">Auto</option><option>4</option><option>5</option></select>
+  <div class="err" id="err"></div>
+  <div class="row">
+    <button id="gen" class="gen" data-fx="fuse" data-fuse-ms="2000" data-fuse-watch="#topic, #scenes" data-fuse-require="#topic" data-fuse-status="#fuse-status"><span>Generate</span></button>
+    <a href="#" style="color:#fff">Batch mode</a>
+  </div>
+  <p class="fuse-status" id="fuse-status" role="status" aria-live="polite"></p>
+</div>
+<script type="module">
+import '/static/fx.js';
+window.submitted = [];
+const topic = document.getElementById('topic');
+function submitJob(){                         // stands in for the page's real handler
+  const t = topic.value.trim();
+  if (t.length < 3) { document.getElementById('err').textContent = 'Enter a topic'; window.submitted.push('ERR'); return; }
+  document.getElementById('err').textContent = ''; window.submitted.push(t + '|' + document.getElementById('scenes').value);
+}
+document.getElementById('gen').addEventListener('click', submitJob);                 // the page's own listener, registered BEFORE fx.js wiring would matter
+topic.addEventListener('keydown', e => { if (e.key === 'Enter') submitJob(); });      // the page's own Enter handler
+window.ready = true;
+</script></body></html>
