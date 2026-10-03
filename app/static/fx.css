@@ -43,16 +43,17 @@
                data-fuse-status (selector of a role="status" element for the instructions text). */
 [data-fx~="fuse"]{position:relative}
 [data-fx~="fuse"]>*:not(.fuse-ui){transition:opacity .22s ease}
-[data-fx~="fuse"].is-fuse>*:not(.fuse-ui){opacity:0}
+[data-fx~="fuse"].is-fuse>*:not(.fuse-ui):not(.fuse-ring){opacity:0}
 .fuse-ui{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:10px;overflow:hidden;
-  background:#111;color:#e2c98f;border:1px solid #a68b5b;border-radius:inherit;font:inherit;font-weight:700;
+  background:#111;color:#e2c98f;border:1px solid rgba(166,139,91,.4);border-radius:inherit;font:inherit;font-weight:700;
   opacity:0;filter:blur(5px);pointer-events:none;transition:opacity .25s ease,filter .25s ease}
 .is-fuse>.fuse-ui{opacity:1;filter:none}
 .fuse-count{font-variant-numeric:tabular-nums;font-weight:600;font-size:.85em;color:#b5b0a5;min-width:1.6em;text-align:left}
-.fuse-line{position:absolute;left:12px;right:12px;bottom:7px;height:2px;border-radius:2px;background:rgba(166,139,91,.25)}
-.fuse-burn{position:absolute;inset:0;border-radius:2px;background:linear-gradient(90deg,#a68b5b,#f1e4c4);transform-origin:left center;transform:scaleX(var(--p,1))}
-.fuse-spark{position:absolute;top:50%;left:calc(var(--p,1) * 100%);width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:50%;
-  background:#fff6dd;box-shadow:0 0 8px 3px rgba(241,228,196,.85);animation:fuse-flick .14s steps(2) infinite}
-@keyframes fuse-flick{50%{transform:scale(.7);opacity:.75}}
+.fuse-ring{position:absolute;overflow:visible;pointer-events:none;opacity:0;transition:opacity .2s ease}
+.is-fuse>.fuse-ring{opacity:1}
+.fuse-track{fill:none;stroke:rgba(166,139,91,.22);stroke-width:2}
+.fuse-burn-path{fill:none;stroke:#e2c98f;stroke-width:2.6;stroke-linecap:round;filter:drop-shadow(0 0 3px rgba(241,228,196,.55))}
+.fuse-spark-dot{fill:#fff6dd;filter:drop-shadow(0 0 5px rgba(241,228,196,.95));animation:fuse-flick .14s steps(2) infinite}
+@keyframes fuse-flick{50%{opacity:.7}}
 .fuse-status{min-height:1.4em;margin:10px 0 0;font-size:13px;line-height:1.4;color:#b5b0a5}
-@media (prefers-reduced-motion:reduce){.fuse-spark{animation:none}.fuse-ui{transition:none;filter:none}}
+@media (prefers-reduced-motion:reduce){.fuse-spark-dot{animation:none}.fuse-ui{transition:none;filter:none}}

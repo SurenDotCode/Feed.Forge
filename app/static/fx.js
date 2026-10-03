@@ -129,19 +129,44 @@ addEventListener('resize', stackSched);
 /* ---------------- fuse button ---------------- */
 function initFuse(btn) {
   if (btn.__fuse) return; btn.__fuse = true;
-  const MS = +btn.dataset.fuseMs || 5000;
+  const ms = () => +btn.dataset.fuseMs || 5000;
   const watchSel = btn.dataset.fuseWatch || '', reqSel = btn.dataset.fuseRequire || '';
   const status = btn.dataset.fuseStatus ? document.querySelector(btn.dataset.fuseStatus) : null;
   const ui = document.createElement('span'); ui.className = 'fuse-ui'; ui.setAttribute('aria-hidden', 'true');
-  ui.innerHTML = '<span class="fuse-label">Undo</span><span class="fuse-count"></span><span class="fuse-line"><i class="fuse-burn"></i><b class="fuse-spark"></b></span>';
+  ui.innerHTML = '<span class="fuse-label">Undo</span><span class="fuse-count"></span>';
   btn.appendChild(ui);
+  // the fuse: a ring around the button edge that burns away clockwise from the top center, with a spark at the burning tip
+  const NS = 'http://www.w3.org/2000/svg', PAD = 6;
+  const ring = document.createElementNS(NS, 'svg'); ring.setAttribute('class', 'fuse-ring'); ring.setAttribute('aria-hidden', 'true');
+  const track = document.createElementNS(NS, 'path'); track.setAttribute('class', 'fuse-track');
+  const burn = document.createElementNS(NS, 'path'); burn.setAttribute('class', 'fuse-burn-path');
+  const spark = document.createElementNS(NS, 'circle'); spark.setAttribute('class', 'fuse-spark-dot'); spark.setAttribute('r', '3.6');
+  ring.append(track, burn, spark); btn.appendChild(ring);
+  let total = 1, lastP = 1;
+  function paintRing(p) {
+    const head = (1 - p) * total;
+    burn.style.strokeDasharray = (p * total).toFixed(2) + ' ' + total.toFixed(2);
+    burn.style.strokeDashoffset = (-head).toFixed(2);
+    const pt = burn.getPointAtLength(Math.min(head, total));
+    spark.setAttribute('cx', pt.x.toFixed(2)); spark.setAttribute('cy', pt.y.toFixed(2));
+  }
+  function layout() {
+    const w = btn.offsetWidth + 2 * PAD, h = btn.offsetHeight + 2 * PAD; if (!w || !h) return;
+    ring.setAttribute('width', w); ring.setAttribute('height', h); ring.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+    ring.style.left = ring.style.top = -PAD + 'px';
+    const rr = parseFloat(getComputedStyle(btn).borderTopLeftRadius) || 10;
+    const r = Math.min(rr + PAD - 1, (h - 2) / 2, (w - 2) / 2), x0 = 1, y0 = 1, x1 = w - 1, y1 = h - 1;
+    const d = `M ${w / 2} ${y0} H ${x1 - r} A ${r} ${r} 0 0 1 ${x1} ${y0 + r} V ${y1 - r} A ${r} ${r} 0 0 1 ${x1 - r} ${y1} H ${x0 + r} A ${r} ${r} 0 0 1 ${x0} ${y1 - r} V ${y0 + r} A ${r} ${r} 0 0 1 ${x0 + r} ${y0} H ${w / 2}`;
+    track.setAttribute('d', d); burn.setAttribute('d', d); total = burn.getTotalLength(); paintRing(lastP);
+  }
+  new ResizeObserver(layout).observe(btn); layout();
   const count = ui.querySelector('.fuse-count');
-  let burning = false, deadline = 0, left = MS, raf = 0, bypass = false, clearT = 0, lastSec = -1;
+  let burning = false, deadline = 0, left = 5000, raf = 0, bypass = false, clearT = 0, lastSec = -1;
   const say = (t, ms = 0) => { if (!status) return; status.textContent = t; clearTimeout(clearT); if (ms) clearT = setTimeout(() => { status.textContent = ''; }, ms); };
   const valid = () => { if (!reqSel) return true; const i = document.querySelector(reqSel); return !!i && i.value.trim().length >= 3; };
   const watched = (t) => !!watchSel && !!t.closest && !!t.closest(watchSel);
   const paint = (rem) => {
-    const p = Math.max(0, rem / MS); ui.style.setProperty('--p', p.toFixed(4));
+    const p = Math.max(0, Math.min(1, rem / ms())); lastP = p; paintRing(p);
     const s = Math.ceil(rem / 1000); if (s !== lastSec) { lastSec = s; count.textContent = s + 's'; }
   };
   const tick = () => {
@@ -150,14 +175,14 @@ function initFuse(btn) {
     if (rem <= 0) { commit(); return; }
     raf = requestAnimationFrame(tick);
   };
-  const arm = () => { deadline = performance.now() + MS; lastSec = -1; paint(MS); cancelAnimationFrame(raf); raf = requestAnimationFrame(tick); };
+  const arm = () => { deadline = performance.now() + ms(); lastSec = -1; paint(ms()); cancelAnimationFrame(raf); raf = requestAnimationFrame(tick); };
   function start() {
     burning = true; btn.classList.add('is-fuse');
-    btn.setAttribute('aria-label', 'Undo. Video generation starts in ' + Math.round(MS / 1000) + ' seconds. Press Escape to cancel.');
-    say('Starting in ' + Math.round(MS / 1000) + 's. Edit your topic to restart the timer, or press Esc to undo.');
+    btn.setAttribute('aria-label', 'Undo. Video generation starts in ' + Math.round(ms() / 1000) + ' seconds. Press Escape to cancel.');
+    say('Starting in ' + Math.round(ms() / 1000) + 's. Edit your topic to restart the timer, or press Esc to undo.');
     arm();
   }
-  function restart() { say('You edited the topic, so the timer restarted. Starting in ' + Math.round(MS / 1000) + 's. Press Esc to undo.'); arm(); }
+  function restart() { say('You edited the topic, so the timer restarted. Starting in ' + Math.round(ms() / 1000) + 's. Press Esc to undo.'); arm(); }
   function end() { burning = false; cancelAnimationFrame(raf); btn.classList.remove('is-fuse'); btn.removeAttribute('aria-label'); }
   function cancel(why) {
     if (!burning) return; end();
