@@ -1,0 +1,34 @@
+/* FeedForge ff-actions.css : job actions menu, undo toast, specs + script panels. Pairs with ff-actions.js */
+.ffa-actions{display:contents}
+.ffa-btn{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 18px;font:inherit;font-weight:700;color:var(--text,#f7f6f3);
+  background:transparent;border:1px solid var(--line,rgba(247,246,243,.2));border-radius:10px;cursor:pointer;transition:background .2s ease}
+.ffa-btn:hover{background:rgba(255,255,255,.06)}
+.ffa-btn:focus-visible,.ffa-tilebtn:focus-visible,.ffa-item:focus-visible,.ffa-toast-btn:focus-visible{outline:2px solid #c4a874;outline-offset:2px}
+.ffa-drive{display:inline-flex;align-items:center;min-height:48px}
+.ffa-drive[hidden]{display:none}
+.ffa-tilebtn{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:10px;border:1px solid var(--line,rgba(247,246,243,.2));
+  background:transparent;color:var(--text,#f7f6f3);font:700 18px/1 inherit;cursor:pointer}
+.ffa-tilebtn:hover{background:rgba(255,255,255,.08)}
+.ffa-menu{position:fixed;z-index:1000;min-width:220px;padding:6px;background:#242424;border:1px solid rgba(247,246,243,.16);border-radius:12px;box-shadow:0 18px 40px rgba(0,0,0,.5)}
+.ffa-item{display:block;width:100%;text-align:left;padding:11px 12px;border:0;border-radius:8px;background:transparent;color:#f7f6f3;font:inherit;cursor:pointer}
+.ffa-item:hover,.ffa-item:focus-visible{background:rgba(166,139,91,.2)}
+.ffa-item.danger{color:#f0867e}
+.ffa-item:disabled{opacity:.4;cursor:not-allowed}
+.ffa-sep{height:1px;margin:6px 4px;background:rgba(247,246,243,.12)}
+.ffa-toast{position:fixed;left:50%;bottom:28px;z-index:1100;display:flex;align-items:center;gap:18px;max-width:min(92vw,520px);padding:13px 18px;
+  background:#111;color:#f7f6f3;border:1px solid rgba(166,139,91,.55);border-radius:12px;box-shadow:0 18px 40px rgba(0,0,0,.55);
+  opacity:0;translate:-50% 18px;pointer-events:none;transition:opacity .25s ease,translate .3s cubic-bezier(.22,1,.36,1)}
+.ffa-toast.show{opacity:1;translate:-50% 0;pointer-events:auto}
+.ffa-toast-btn{background:none;border:0;padding:4px;color:#e2c98f;font:inherit;font-weight:700;text-decoration:underline;cursor:pointer}
+.ffa-panel{margin-top:16px;padding:14px;border:1px solid var(--line,rgba(247,246,243,.14));border-radius:12px;background:rgba(255,255,255,.02)}
+.ffa-panel:first-child{margin-top:18px}
+.ffa-h{margin-bottom:10px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#c4a874}
+.ffa-specs{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px;margin:0}
+.ffa-specs dt{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#b5b0a5}
+.ffa-specs dd{margin:3px 0 0;font-weight:700}
+.ffa-specs .wide{grid-column:1/-1}
+.ffa-scenes{display:grid;gap:12px;margin:0;padding:0;list-style:none}
+.ffa-scenes li{display:grid;grid-template-columns:20px 1fr;gap:10px}
+.ffa-scenes span{font-size:12px;font-weight:700;color:#c4a874}
+.ffa-scenes p{margin:0;font-size:13px;line-height:1.45;color:#d8d4cb;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+@media (prefers-reduced-motion:reduce){.ffa-toast{transition:none}}

@@ -3,6 +3,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/fx.css">
+<link rel="stylesheet" href="/static/ff-actions.css">
 <style>
 :root{
  --bg:#1A1A1A;--bg-alt:#202020;--surface:#242424;--surface-2:#2C2C2C;--deep:#141414;
@@ -269,6 +270,9 @@ footer.wrap{padding:24px 24px 48px}
 .gen-lb{position:relative}
 /* job card: refine frame */
 .jb{min-width:0}
+.jcol{min-width:0}
+.jcol [data-ffa-extras]{margin-top:14px;width:100%}
+[data-ffa-actions],[data-ffa-tile]{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
 .nt,.nt *,.nt *::before,.nt *::after{transition:none!important}
 .fr-media{position:absolute;inset:0;transition:filter .6s cubic-bezier(.22,1,.36,1),transform .6s cubic-bezier(.22,1,.36,1),opacity .6s cubic-bezier(.22,1,.36,1)}
 .fr-bg{position:absolute;inset:0;background:var(--deep)}
@@ -685,13 +689,14 @@ document.addEventListener('visibilitychange',kick);
 
 // static skeleton, built once per job; updateCard() then mutates it in place
 function card(j){const id=esc(j.id);
- return `<div class="frame" data-st="queued">
+ return `<div class="jcol"><div class="frame" data-st="queued">
   <div class="fr-media"><div class="fr-bg"></div></div>
   <div class="fr-deco" aria-hidden="true"><i class="fr-box"></i><i class="fr-scrub"></i></div>
   <div class="fr-band" aria-hidden="true"></div>
   <span class="fr-chip" aria-hidden="true"><i></i><span class="fr-ct"></span></span>
   <div class="fr-err"><button class="fr-retry" type="button" aria-label="Retry: ${esc(j.topic)}">Retry</button><p></p></div>
  </div>
+ <div data-ffa-extras></div></div>
  <div class="jb">
   <div class="tl">
    <button class="tl-h" type="button" aria-expanded="true" aria-controls="tr-${id}"><i class="tl-g" aria-hidden="true"></i><span class="tl-l"><span class="tl-a"></span><span class="tl-b" aria-hidden="true"></span></span><span class="tl-c" aria-hidden="true">0:00.0</span></button>
@@ -708,7 +713,7 @@ function card(j){const id=esc(j.id);
   <div class="jpack"></div>
  </div>`}
 function bind(n,j){const s=x=>n.el.querySelector(x);
- Object.assign(n,{fr:s('.frame'),med:s('.fr-media'),chip:s('.fr-chip'),ct:s('.fr-ct'),em:s('.fr-err p'),rt:s('.fr-retry'),
+ Object.assign(n,{ex:s('[data-ffa-extras]'),fr:s('.frame'),med:s('.fr-media'),chip:s('.fr-chip'),ct:s('.fr-ct'),em:s('.fr-err p'),rt:s('.fr-retry'),
   tl:s('.tl'),th:s('.tl-h'),la:s('.tl-a'),lb:s('.tl-b'),cl:s('.tl-c'),tr:s('.tl-tr'),ol:s('.tl-steps'),
   det:s('details'),sum:s('summary'),pre:s('pre'),meta:s('.jmeta'),h3:s('h3'),pills:s('.pills'),stats:s('.stats'),jerr:s('.jerr'),jpack:s('.jpack'),lis:[]});
  n.det.open=!!OPEN[j.id];
@@ -779,7 +784,8 @@ function updateCard(n,j){n.j=j;
    <div class="prow"><div class="prow-h"><div class="label">Caption</div><button class="btn ghost sm" data-copy="caption" data-id="${id}">Copy</button></div><p class="cap">${esc(pp.caption)}</p></div>
    <div class="prow"><div class="prow-h"><div class="label">Hashtags</div><button class="btn ghost sm" data-copy="tags" data-id="${id}">Copy</button></div><p class="tags">${esc((pp.hashtags||[]).join(' '))}</p></div>
   </div>
-  <div class="actions">${j.video_url?`<a class="btn" href="${esc(j.video_url)}" download>Download MP4</a>`:''}<button class="btn ghost" data-copy="all" data-id="${id}">Copy all</button></div>`:'')}
+  <div class="actions">${j.video_url?`<a class="btn" href="${esc(j.video_url)}" download>Download MP4</a>`:''}<button class="btn ghost" data-copy="all" data-id="${id}">Copy all</button><span data-ffa-actions></span></div>`:'')
+ if(window.FFActions){FFActions.mountJobExtras(n.ex,j);const fa=n.jpack.querySelector('[data-ffa-actions]');if(fa)FFActions.mountJobActions(fa,j)}}
 
 function pipeline(jobs){if(OFFLINE){document.querySelectorAll('#steps .step').forEach(el=>{el.className='step';el.removeAttribute('aria-current')});$('pipeNow').textContent='Server unreachable';return}
  const a=jobs.find(j=>j.status==='running')||jobs.find(j=>j.status==='queued')||jobs[0];
@@ -794,10 +800,12 @@ async function load(){let jobs;
  catch(e){OFFLINE=true;jobs=LAST}
  $('net').hidden=!OFFLINE;
  render(jobs)}
+function galTiles(d){if(!window.FFActions)return;const gg=$('galGrid');d.forEach(j=>{const t=[...gg.children].find(x=>x.dataset.jobId===String(j.id)),sp=t&&t.querySelector('[data-ffa-tile]');if(sp)FFActions.mountTileActions(sp,j)})}
 function gallery(jobs){const d=jobs.filter(j=>j.status==='done'&&j.video_url).slice(0,6),g=$('gal'),sig=JSON.stringify(d.map(j=>[j.id,j.video_url,j.topic]));
- g.hidden=!d.length;if(g.dataset.sig===sig)return;g.dataset.sig=sig;
- $('galGrid').innerHTML=d.map(j=>`<article class="card"><video muted playsinline preload="metadata" tabindex="-1" aria-hidden="true" src="${esc(j.video_url)}#t=0.1"></video><h4>${esc((j.publish_pack&&j.publish_pack.title)||j.topic)}</h4><button class="btn ghost sm" data-goto="${esc(j.id)}" aria-label="Play ${esc(j.topic)}">Play</button></article>`).join('')}
+ g.hidden=!d.length;if(g.dataset.sig===sig){galTiles(d);return}g.dataset.sig=sig;
+ $('galGrid').innerHTML=d.map(j=>`<article class="card" data-job-id="${esc(j.id)}"><video muted playsinline preload="metadata" tabindex="-1" aria-hidden="true" src="${esc(j.video_url)}#t=0.1"></video><h4>${esc((j.publish_pack&&j.publish_pack.title)||j.topic)}</h4><button class="btn ghost sm" data-goto="${esc(j.id)}" aria-label="Play ${esc(j.topic)}">Play</button><span data-ffa-tile></span></article>`).join('');galTiles(d)}
 function render(jobs){
+ if(window.FFActions)jobs=jobs.filter(j=>!FFActions.isHidden(j.id));
  jobs.forEach(j=>{if(j.publish_pack)CACHE[j.id]=j.publish_pack});
  pipeline(jobs);
  $('count').textContent=jobs.length?`${jobs.length} job${jobs.length>1?'s':''}`:'';
@@ -808,13 +816,22 @@ function render(jobs){
  box.querySelector('.empty')?.remove();
  const seen=new Set(),fresh=[];
  jobs.forEach((j,i)=>{seen.add(j.id);const sig=JSON.stringify(j)+OFFLINE;let n=NODES[j.id];
-  if(!n){const el=document.createElement('article');n=NODES[j.id]={el,sig:'',quiet:true};el.dataset.id=j.id;el.className='card job nt';el.dataset.fx='glow';el.innerHTML=card(j);bind(n,j);fresh.push(n)}
+  if(!n){const el=document.createElement('article');n=NODES[j.id]={el,sig:'',quiet:true};el.dataset.id=j.id;el.dataset.jobId=j.id;el.className='card job nt';el.dataset.fx='glow';el.innerHTML=card(j);bind(n,j);fresh.push(n)}
   if(n.sig!==sig){updateCard(n,j);n.sig=sig}   // one persistent node per job, updated in place, so animations and playing videos are never restarted
   if(box.children[i]!==n.el)box.insertBefore(n.el,box.children[i]||null)});
  // new nodes render settled (no transitions or rises); animations are enabled after first paint
  if(fresh.length)requestAnimationFrame(()=>requestAnimationFrame(()=>fresh.forEach(n=>{n.quiet=false;n.el.classList.remove('nt')})));
  for(const k in NODES)if(!seen.has(k)){NODES[k].el.remove();delete NODES[k]}}
 
+function ffaReady(){if(!window.FFActions)return;
+ FFActions.configure({topicSelector:'#topic',createCardSelector:'[aria-labelledby="gen-h"]'});
+ if(LAST.length){for(const k in NODES)NODES[k].sig='';render(LAST)}}
+document.addEventListener('ff:actions-ready',ffaReady);if(window.FFActions)ffaReady();
+document.addEventListener('ff:job-deleted',e=>{const id=String(e.detail&&e.detail.id);
+ LAST=LAST.filter(j=>String(j.id)!==id);
+ if(NODES[id]){NODES[id].el.remove();delete NODES[id]}
+ const g=$('galGrid');[...g.children].forEach(t=>{if(t.dataset.jobId===id)t.remove()});$('gal').dataset.sig='';
+ render(LAST)});
 fetch('/health').then(r=>r.json()).then(h=>$('h').textContent=`LLM: ${h.llm} · images: ${h.image_provider} · workers: ${h.workers}${h.mock?' · MOCK MODE':''}`);
 load();setInterval(load,2500);
 </script>
@@ -975,4 +992,5 @@ load();setInterval(load,2500);
 })();
 </script>
 <script type="module" src="/static/fx.js"></script>
+<script type="module" src="/static/ff-actions.js"></script>
 </body></html>

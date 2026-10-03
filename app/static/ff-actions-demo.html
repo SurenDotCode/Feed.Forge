@@ -1,0 +1,41 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="/static/ff-actions.css">
+<style>
+:root{--text:#f7f6f3;--line:rgba(247,246,243,.14);--font:Inter,Helvetica,Arial,sans-serif}*{box-sizing:border-box}
+body{margin:0;background:#1a1a1a;color:var(--text);font-family:var(--font);padding:40px 6vw}
+.card{display:grid;grid-template-columns:280px 1fr;gap:28px;background:#242424;border:1px solid var(--line);border-top:4px solid #a68b5b;border-radius:16px;padding:26px;max-width:1100px;margin-bottom:24px}
+.vid{aspect-ratio:9/16;background:linear-gradient(#5b2a86,#e0489a);border-radius:12px}
+.row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:18px}
+.b{min-height:48px;padding:0 20px;border-radius:10px;border:0;background:#a68b5b;color:#111;font:700 16px var(--font)}
+.b.o{background:transparent;color:var(--text);border:1px solid var(--line)}
+.tiles{display:flex;gap:16px;max-width:1100px}.tile{width:200px;background:#242424;border:1px solid var(--line);border-radius:14px;padding:12px}
+.tile .t{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-weight:700}
+input{padding:12px;border-radius:10px;border:1px solid var(--line);background:#2c2c2c;color:#fff;font:inherit;width:420px}
+</style></head><body>
+<div id="create-card" style="max-width:1100px;margin-bottom:24px"><input id="topic" placeholder="Topic"></div>
+<div id="cards"></div><div class="tiles" id="tiles"></div>
+<script type="module">
+import '/static/ff-actions.js';
+FFActions.configure({ topicSelector: '#topic', createCardSelector: '#create-card', undoMs: 2000 });
+const mk = (id, topic) => ({ id, topic, status: 'done', video_url: '/api/jobs/' + id + '/video',
+  plan: { title: topic, hook: 'Did you know?', caption: 'A quick look.', hashtags: ['#Qoneqt'], scenes: [
+    { narration: 'Did you know why your first ten users will not come from ads at all?', visual_prompt: 'cinematic city' },
+    { narration: 'Here is the simple idea behind it, explained in plain words anyone can follow.', visual_prompt: 'whiteboard' },
+    { narration: 'The big win is that small, steady steps add up quickly over time.', visual_prompt: 'steps' },
+    { narration: 'A common mistake is rushing, so slow down and focus on the basics first.', visual_prompt: 'clock' },
+    { narration: 'Ready to explore this with people who care? Join the community on Qoneqt today.', visual_prompt: 'group' }] },
+  quality: { passed: true, duration_s: 31.24, size_mb: 1.93, checks: { file_not_empty: true, video_stream: true, aspect_9_16: true, resolution_1080x1920: true, audio_present: true, duration_8_to_90s: true, scene_count_ok: true } },
+  publish_pack: { title: topic, caption: 'A quick look.', hashtags: ['#Qoneqt', '#Community'] } });
+const jobs = [mk('aaa111', 'Why your first ten users will not come from ads'), mk('bbb222', 'Build your first robot arm out of cardboard')];
+const cards = document.getElementById('cards'), tiles = document.getElementById('tiles');
+for (const j of jobs) {
+  const c = document.createElement('div'); c.className = 'card'; c.dataset.jobId = j.id;
+  c.innerHTML = '<div><div class="vid"></div><div data-ffa-extras></div></div><div><h3>' + j.topic + '</h3><div class="row"><button class="b">Download MP4</button><button class="b o">Copy all</button><span data-ffa-actions></span></div></div>';
+  cards.appendChild(c);
+  FFActions.mountJobExtras(c.querySelector('[data-ffa-extras]'), j); FFActions.mountJobActions(c.querySelector('[data-ffa-actions]'), j);
+  const t = document.createElement('div'); t.className = 'tile'; t.dataset.jobId = j.id;
+  t.innerHTML = '<div class="vid" style="aspect-ratio:9/12"></div><div class="t"><span>' + j.topic.slice(0, 16) + '</span><span data-ffa-tile></span></div>';
+  tiles.appendChild(t); FFActions.mountTileActions(t.querySelector('[data-ffa-tile]'), j);
+}
+window.deleted = []; document.addEventListener('ff:job-deleted', (e) => window.deleted.push(e.detail.id));
+window.ready = true;
+</script></body></html>
