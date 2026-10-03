@@ -1,0 +1,33 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>fx demo</title><link rel="stylesheet" href="/static/fx.css">
+<style>
+:root{--bg:#1a1a1a;--surface:#242424;--line:rgba(247,246,243,.12);--text:#f7f6f3;--muted:#b5b0a5;--gold:#a68b5b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Helvetica,Arial,sans-serif}
+section{padding:60px 6vw}h2{margin:0 0 20px}.lab{color:#c4a874;font-size:12px;letter-spacing:.14em;font-weight:700;text-transform:uppercase}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}@media(max-width:900px){.grid{grid-template-columns:1fr 1fr}}
+.tc{min-height:170px;display:flex;flex-direction:column;justify-content:space-between}.tc b{font-size:18px}.tc p{margin:8px 0 0;color:#ddd;font-size:14px;line-height:1.4}
+.big{min-height:300px;display:flex;flex-direction:column;justify-content:center;border:1px solid var(--line);border-radius:18px;background:#202020;padding:34px}
+.big .n{color:#c4a874;font-size:56px;font-weight:800}.big h3{margin:6px 0;font-size:28px}.big p{color:var(--muted);max-width:520px}
+</style></head><body>
+<section id="s1" style="min-height:70vh"><div class="lab">Border glow</div><h2>Move the cursor near the cards</h2>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:900px">
+<div class="card" data-fx="glow" style="min-height:200px"><b>Create card</b><p style="color:#b5b0a5">Glow follows the cursor along the edge.</p></div>
+<div class="card" data-fx="glow" style="min-height:200px"><b>Job card</b><p style="color:#b5b0a5">Second card.</p></div></div></section>
+<section id="s2"><div class="lab">Pixel card</div><h2>Hover a topic</h2>
+<div class="grid" id="pg"></div></section>
+<section id="s3"><div class="lab">Scroll stack</div><h2>The pipeline</h2>
+<div data-fx="stack" id="stack">
+<div class="big"><div class="n">01</div><h3>Script</h3><p>A structured scene plan: hook, scenes, narration and a visual prompt for every scene.</p></div>
+<div class="big"><div class="n">02</div><h3>Generate</h3><p>Visuals and voice are made scene by scene, in parallel.</p></div>
+<div class="big"><div class="n">03</div><h3>Compose</h3><p>Scenes cut to the narration, captions synced to the words.</p></div>
+<div class="big"><div class="n">04</div><h3>Validate</h3><p>Automated checks run before any video is marked ready.</p></div>
+</div></section><section style="height:60vh"><h2>After</h2></section>
+<script type="module">
+import '/static/fx.js';
+const topics=[["AI and CS","You do not need a GPU to ship your first model."],["Physics","Your microwave is a lesson in standing waves."],["College Admissions","The essay is not about you. It is about one Tuesday."],["Startups","Your first ten users will not come from ads."],["Robotics","Build your first arm out of cardboard. Seriously."]];
+const g=document.getElementById('pg');
+topics.forEach(([t,h],i)=>{const b=document.createElement('button');b.className='card tc';b.style.cssText='text-align:left;color:inherit;font:inherit';b.setAttribute('data-fx','pixel');
+b.innerHTML=`<span data-px-face><span class="lab">0${i+1}</span><br><b>${t}</b></span><p data-px-reveal>${h}</p>`;g.appendChild(b)});   // added AFTER load: tests auto-pickup
+window.ready=true;
+</script></body></html>
