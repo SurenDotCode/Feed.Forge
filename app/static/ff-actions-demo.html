@@ -2,9 +2,9 @@
 <style>
 :root{--text:#f7f6f3;--line:rgba(247,246,243,.14);--font:Inter,Helvetica,Arial,sans-serif}*{box-sizing:border-box}
 body{margin:0;background:#1a1a1a;color:var(--text);font-family:var(--font);padding:40px 6vw}
-.card{display:grid;grid-template-columns:280px 1fr;gap:28px;background:#242424;border:1px solid var(--line);border-top:4px solid #a68b5b;border-radius:16px;padding:26px;max-width:1100px;margin-bottom:24px}
+.card{display:grid;grid-template-columns:200px 1fr;gap:28px;align-items:stretch;background:#242424;border:1px solid var(--line);border-top:4px solid #a68b5b;border-radius:16px;padding:26px;max-width:1100px;margin-bottom:24px}
 .vid{aspect-ratio:9/16;background:linear-gradient(#5b2a86,#e0489a);border-radius:12px}
-.row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:18px}
+.right{display:flex;flex-direction:column;min-width:0}.row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:auto;padding-top:20px}.pack{height:250px;border:1px solid var(--line);border-radius:12px;margin-top:14px;padding:16px;color:#b5b0a5}
 .b{min-height:48px;padding:0 20px;border-radius:10px;border:0;background:#a68b5b;color:#111;font:700 16px var(--font)}
 .b.o{background:transparent;color:var(--text);border:1px solid var(--line)}
 .tiles{display:flex;gap:16px;max-width:1100px}.tile{width:200px;background:#242424;border:1px solid var(--line);border-radius:14px;padding:12px}
@@ -29,7 +29,7 @@ const jobs = [mk('aaa111', 'Why your first ten users will not come from ads'), m
 const cards = document.getElementById('cards'), tiles = document.getElementById('tiles');
 for (const j of jobs) {
   const c = document.createElement('div'); c.className = 'card'; c.dataset.jobId = j.id;
-  c.innerHTML = '<div><div class="vid"></div><div data-ffa-extras></div></div><div><h3>' + j.topic + '</h3><div class="row"><button class="b">Download MP4</button><button class="b o">Copy all</button><span data-ffa-actions></span></div></div>';
+  c.innerHTML = '<div><div class="vid"></div><div data-ffa-extras></div></div><div class="right"><h3>' + j.topic + '</h3><div class="pack">publish pack placeholder</div><div class="row"><button class="b">Download MP4</button><button class="b o">Copy all</button><span data-ffa-actions></span></div></div>';
   cards.appendChild(c);
   FFActions.mountJobExtras(c.querySelector('[data-ffa-extras]'), j); FFActions.mountJobActions(c.querySelector('[data-ffa-actions]'), j);
   const t = document.createElement('div'); t.className = 'tile'; t.dataset.jobId = j.id;

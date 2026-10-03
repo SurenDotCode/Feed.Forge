@@ -4,8 +4,6 @@
   background:transparent;border:1px solid var(--line,rgba(247,246,243,.2));border-radius:10px;cursor:pointer;transition:background .2s ease}
 .ffa-btn:hover{background:rgba(255,255,255,.06)}
 .ffa-btn:focus-visible,.ffa-tilebtn:focus-visible,.ffa-item:focus-visible,.ffa-toast-btn:focus-visible{outline:2px solid #c4a874;outline-offset:2px}
-.ffa-drive{display:inline-flex;align-items:center;min-height:48px}
-.ffa-drive[hidden]{display:none}
 .ffa-tilebtn{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:10px;border:1px solid var(--line,rgba(247,246,243,.2));
   background:transparent;color:var(--text,#f7f6f3);font:700 18px/1 inherit;cursor:pointer}
 .ffa-tilebtn:hover{background:rgba(255,255,255,.08)}
@@ -23,12 +21,10 @@
 .ffa-panel{margin-top:16px;padding:14px;border:1px solid var(--line,rgba(247,246,243,.14));border-radius:12px;background:rgba(255,255,255,.02)}
 .ffa-panel:first-child{margin-top:18px}
 .ffa-h{margin-bottom:10px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#c4a874}
-.ffa-specs{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px;margin:0}
+.ffa-specs{display:block;margin:0}
+.ffa-specs>div{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:9px 0;border-top:1px solid var(--line,rgba(247,246,243,.12))}
+.ffa-specs>div:first-child{border-top:0;padding-top:0}
+.ffa-specs>div:last-child{padding-bottom:0}
 .ffa-specs dt{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#b5b0a5}
-.ffa-specs dd{margin:3px 0 0;font-weight:700}
-.ffa-specs .wide{grid-column:1/-1}
-.ffa-scenes{display:grid;gap:12px;margin:0;padding:0;list-style:none}
-.ffa-scenes li{display:grid;grid-template-columns:20px 1fr;gap:10px}
-.ffa-scenes span{font-size:12px;font-weight:700;color:#c4a874}
-.ffa-scenes p{margin:0;font-size:13px;line-height:1.45;color:#d8d4cb;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.ffa-specs dd{margin:0;font-weight:700;white-space:nowrap}
 @media (prefers-reduced-motion:reduce){.ffa-toast{transition:none}}

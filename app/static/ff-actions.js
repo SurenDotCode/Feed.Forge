@@ -1,8 +1,8 @@
-// FeedForge ff-actions.js : job actions (More menu, Save to Drive, delete with undo), toast, specs + script panels. Vanilla JS.
+// FeedForge ff-actions.js : job actions (More menu, delete with undo), toast, compact specs panel. Vanilla JS.
 // Mark every job card and gallery tile with data-job-id="<id>". Everything is idempotent, so call the mount functions on every card update.
 //   FFActions.configure({ topicSelector: '#topic', createCardSelector: '#create-card', undoMs: 6000 })
-//   FFActions.mountJobExtras(el, job)            // left-column panels under the video: specs + script
-//   FFActions.mountJobActions(el, job)           // adds [Save to Drive] and [More v] to the card's button row
+//   FFActions.mountJobExtras(el, job)            // compact specs panel under the video
+//   FFActions.mountJobActions(el, job)           // adds the [More v] menu to the card's button row
 //   FFActions.mountTileActions(el, job)          // gallery tile: a small "..." menu
 //   FFActions.isHidden(id)                       // true for jobs hidden locally (server delete not available): skip them when rendering
 // Event: document 'ff:job-deleted' {detail:{id}} when a job was deleted or hidden, so the page can drop its node from its own map.
@@ -140,36 +140,13 @@ function itemsFor(job, full) {
   return list;
 }
 
-/* ---------- Save to Drive (Google's own button, loaded only when needed) ---------- */
-let driveP = null;
-function loadDrive() {
-  if (driveP) return driveP;
-  driveP = new Promise((res, rej) => {
-    if (window.gapi && window.gapi.savetodrive) return res();
-    const s = document.createElement('script'); s.src = 'https://apis.google.com/js/platform.js'; s.async = true;
-    s.onload = () => res(); s.onerror = () => rej(new Error('blocked')); document.head.appendChild(s);
-    setTimeout(() => rej(new Error('timeout')), 8000);
-  });
-  return driveP;
-}
-function mountDrive(box, job) {
-  if (box.__driveFor === job.id) return; box.__driveFor = job.id; box.innerHTML = ''; box.hidden = true;
-  if (!hasVideo(job)) return;
-  loadDrive().then(() => {
-    if (!(window.gapi && window.gapi.savetodrive)) throw new Error('no gapi');
-    const t = document.createElement('div'); t.id = 'ffa-drive-' + job.id; box.appendChild(t); box.hidden = false;
-    window.gapi.savetodrive.render(t.id, { src: abs(job.video_url), filename: 'feedforge-' + job.id + '.mp4', sitename: cfg.siteName });
-  }).catch(() => { box.hidden = true; });          // offline or blocked: no broken button, it simply is not shown
-}
-
 /* ---------- mounting (idempotent) ---------- */
 export function mountJobActions(el, job) {
   if (!el || !job) return;
   const sig = [job.id, job.status, job.video_url || ''].join('|');
   if (el.__sig === sig) return; el.__sig = sig;
   el.classList.add('ffa-actions');
-  el.innerHTML = '<span class="ffa-drive" hidden></span><button type="button" class="ffa-btn ffa-more" aria-haspopup="menu" aria-expanded="false">More <span aria-hidden="true">▾</span></button>';
-  mountDrive(el.querySelector('.ffa-drive'), job);
+  el.innerHTML = '<button type="button" class="ffa-btn ffa-more" aria-haspopup="menu" aria-expanded="false">More <span aria-hidden="true">▾</span></button>';
   const btn = el.querySelector('.ffa-more');
   btn.addEventListener('click', () => openMenu(btn, itemsFor(job, true)));
 }
@@ -183,20 +160,16 @@ export function mountTileActions(el, job) {
 }
 export function mountJobExtras(el, job) {
   if (!el || !job) return;
-  const sig = [job.id, job.status, job.quality ? job.quality.duration_s : '', job.plan && job.plan.scenes ? job.plan.scenes.length : 0].join('|');
+  const sig = [job.id, job.status, job.quality ? job.quality.duration_s : ''].join('|');
   if (el.__sig === sig) return; el.__sig = sig;
   if (job.status !== 'done') { el.innerHTML = ''; return; }
   const q = job.quality || {}, checks = q.checks || {}, keys = Object.keys(checks), passed = keys.filter((k) => checks[k]).length;
-  const scenes = (job.plan && job.plan.scenes) || [];
-  let html = '<div class="ffa-panel"><div class="ffa-h">Video specs</div><dl class="ffa-specs">' +
-    '<div><dt>Length</dt><dd>' + (q.duration_s != null ? Number(q.duration_s).toFixed(1) + ' s' : 'n/a') + '</dd></div>' +
-    '<div><dt>Format</dt><dd>' + (checks.resolution_1080x1920 ? '1080 × 1920' : '9:16') + '</dd></div>' +
-    '<div><dt>Size</dt><dd>' + (q.size_mb != null ? esc(q.size_mb) + ' MB' : 'n/a') + '</dd></div>' +
-    '<div><dt>Scenes</dt><dd>' + (scenes.length || 'n/a') + '</dd></div>' +
-    '<div class="wide"><dt>Quality gate</dt><dd>' + (keys.length ? passed + ' of ' + keys.length + ' checks passed' : 'n/a') + '</dd></div></dl></div>';
-  if (scenes.length) html += '<div class="ffa-panel"><div class="ffa-h">Script</div><ol class="ffa-scenes">' +
-    scenes.map((s, i) => '<li><span>' + (i + 1) + '</span><p>' + esc(s.narration) + '</p></li>').join('') + '</ol></div>';
-  el.innerHTML = html;
+  const row = (k, v) => '<div><dt>' + k + '</dt><dd>' + v + '</dd></div>';
+  el.innerHTML = '<div class="ffa-panel"><div class="ffa-h">Video specs</div><dl class="ffa-specs">' +
+    row('Length', q.duration_s != null ? Number(q.duration_s).toFixed(1) + ' s' : 'n/a') +
+    row('Format', checks.resolution_1080x1920 ? '1080×1920' : '9:16') +
+    row('Size', q.size_mb != null ? esc(q.size_mb) + ' MB' : 'n/a') +
+    row('Checks', keys.length ? passed + '/' + keys.length + ' passed' : 'n/a') + '</dl></div>';
 }
 
 export const configure = (o) => Object.assign(cfg, o);
