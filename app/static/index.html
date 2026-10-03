@@ -350,6 +350,7 @@ li[data-s=bad] .ic::after{transform:rotate(-45deg)}
 .top{background:var(--bg);border-top:1px solid var(--line)}
 .mk-g3,.mk-g6{display:grid;gap:20px;grid-template-columns:repeat(3,1fr)}
 .mk-g3>*,.mk-g6>*{margin:0!important}
+.mk-g6>.dk{grid-column:1/-1}
 .mk .card h3{margin:6px 0 8px;font-size:18px;letter-spacing:-.01em}
 .mk .card p{margin:0;color:var(--muted);font-size:15px}
 .js .mk-r{opacity:0;transform:translateY(16px);transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .5s cubic-bezier(.22,1,.36,1)}
@@ -472,33 +473,33 @@ li[data-s=bad] .ic::after{transform:rotate(-45deg)}
 <div class="tk" data-k="tk" aria-hidden="true"><div class="tk-t"><div class="tk-g"><span>TOPIC IN</span><i class="dm"></i><span>SCRIPT</span><i class="dm"></i><span>VOICE</span><i class="dm"></i><span>VISUALS</span><i class="dm"></i><span>CAPTIONS</span><i class="dm"></i><span>9:16 MP4</span><i class="dm"></i><span>QUALITY GATE</span><i class="dm"></i><span>READY TO POST</span><i class="dm"></i></div></div></div>
 
 <section class="mk" aria-labelledby="pb-h"><div class="wrap">
- <div class="label mk-r">01 · PROBLEM + GAP</div>
- <h2 class="lp-h2 mk-r" id="pb-h">The feed is hungry. Nobody has time to cook.</h2>
+ <div class="label mk-r">01 · THE PROBLEM</div>
+ <h2 class="lp-h2 mk-r" id="pb-h">The feed needs more video than creators can make.</h2>
  <div class="mk-g3">
-  <article class="card mk-r"><h3>Creators</h3><p>Have the knowledge. Not the editing hours.</p></article>
-  <article class="card mk-r"><h3>Platform</h3><p>Needs more video than people can make.</p></article>
-  <article class="card mk-r"><h3>Users</h3><p>Want signal from people they trust.</p></article>
+  <article class="card mk-r"><h3>Creators</h3><p>They know the topic. They lack the hours to script, edit and caption it.</p></article>
+  <article class="card mk-r"><h3>Platform</h3><p>New and niche communities often start with empty feeds.</p></article>
+  <article class="card mk-r"><h3>Users</h3><p>Want fresh videos from the communities they follow.</p></article>
  </div>
  <div class="gap mk-r">
-  <div class="label">WHY CURRENT TOOLS FALL SHORT</div>
-  <p>Runway, Pika and CapCut are strong at clips. Each one still needs a human at every step: prompt, cut, caption, check, export.</p>
-  <p class="gl">There is no repeatable system that turns one topic into a finished vertical video.</p>
+  <div class="label">WHY DO CURRENT TOOLS FALL SHORT?</div>
+  <p>Tools like Runway, Pika and CapCut are great at individual clips. Turning an idea into a finished, captioned video usually means stitching several tools together by hand.</p>
+  <p class="gl">FeedForge handles the whole chain, from one topic to a finished vertical video.</p>
  </div>
 </div></section>
 
 <section class="mk ink" id="how" aria-labelledby="how-h"><div class="wrap">
  <div class="label mk-r">02 · THE PIPELINE</div>
- <h2 class="lp-h2 mk-r" id="how-h">Four stages. Zero hand-offs.</h2>
+ <h2 class="lp-h2 mk-r" id="how-h">Four stages. Fully hands-off.</h2>
  <div class="stk" data-fx="stack">
-  <article class="stk-c"><div class="stk-n" aria-hidden="true">01</div><div><h3>Script</h3><p>A structured scene plan: hook, scenes, narration and a visual prompt for every scene.</p><span class="chip">Output: scene plan (JSON)</span></div></article>
-  <article class="stk-c"><div class="stk-n" aria-hidden="true">02</div><div><h3>Generate</h3><p>Visuals and voice are made scene by scene, in parallel. If a source fails, a fallback steps in.</p><span class="chip">Output: images and voiceover per scene</span></div></article>
-  <article class="stk-c"><div class="stk-n" aria-hidden="true">03</div><div><h3>Compose</h3><p>Scenes cut to the narration, captions synced to the words, framed for 9:16.</p><span class="chip">Output: 9:16 MP4 with captions</span></div></article>
-  <article class="stk-c"><div class="stk-n" aria-hidden="true">04</div><div><h3>Validate</h3><p>Automated checks run before any video is marked ready.</p><span class="chip">Output: pass or fail report</span></div></article>
+  <article class="stk-c"><div class="stk-n" aria-hidden="true">01</div><div><h3>Script</h3><p>A structured scene plan: a hook, narration and an image prompt for every scene.</p><span class="chip">Output: scene plan (JSON)</span></div></article>
+  <article class="stk-c"><div class="stk-n" aria-hidden="true">02</div><div><h3>Generate</h3><p>Images and voiceover are made for every scene in parallel. If one fails, the rest of the video still finishes.</p><span class="chip">Output: images and voiceover per scene</span></div></article>
+  <article class="stk-c"><div class="stk-n" aria-hidden="true">03</div><div><h3>Compose</h3><p>Scenes are cut to the narration, captions follow the spoken words, and the video is framed for 9:16.</p><span class="chip">Output: 9:16 MP4 with captions</span></div></article>
+  <article class="stk-c"><div class="stk-n" aria-hidden="true">04</div><div><h3>Validate</h3><p>Automatic checks run before a video is marked ready.</p><span class="chip">Output: pass or fail report</span></div></article>
  </div>
 </div></section>
 
 <section class="mk" aria-labelledby="ex-h"><div class="wrap">
- <div class="label mk-r">03 · EXAMPLE</div>
+ <div class="label mk-r">03 · SEE IT WORK</div>
  <h2 class="lp-h2 mk-r" id="ex-h">Watch a topic become a script.</h2>
  <div class="term mk-r" id="term" data-k="term" role="group" aria-label="Example plan for a sample topic">
   <div class="term-h"><span class="term-t">feedforge / example</span><span class="chip">Example output, not a live generation</span></div>
@@ -510,21 +511,21 @@ li[data-s=bad] .ic::after{transform:rotate(-45deg)}
      <li><span class="k">Scene 1</span><span>A founder watches an ad dashboard spend money and show no signups.</span></li>
      <li><span class="k">Scene 2</span><span>She posts one honest question in a niche community and gets replies.</span></li>
      <li><span class="k">Scene 3</span><span>The people who answered become the first ten users.</span></li>
-     <li><span class="k">CTA</span><span>Join the conversation on Qoneqt.</span></li>
+     <li><span class="k">Closing line</span><span>Join the conversation on Qoneqt.</span></li>
     </ol>
     <ol class="plan">
      <li><span class="k">Hook</span><span>A robot arm does not need a lab. It needs cardboard and a syringe.</span></li>
      <li><span class="k">Scene 1</span><span>Cut cardboard strips and pin them together as an elbow and a wrist.</span></li>
      <li><span class="k">Scene 2</span><span>Link syringes with tubing so pushing one plunger moves the arm.</span></li>
      <li><span class="k">Scene 3</span><span>Lift a paper cup and show what simple hydraulics can do.</span></li>
-     <li><span class="k">CTA</span><span>Join the conversation on Qoneqt.</span></li>
+     <li><span class="k">Closing line</span><span>Join the conversation on Qoneqt.</span></li>
     </ol>
     <ol class="plan">
      <li><span class="k">Hook</span><span>Your microwave has hot spots because of physics, not bad design.</span></li>
      <li><span class="k">Scene 1</span><span>Microwaves bounce around the box and form standing waves.</span></li>
      <li><span class="k">Scene 2</span><span>Where the waves peak, food heats fast. Where they cancel, it stays cool.</span></li>
      <li><span class="k">Scene 3</span><span>The turntable moves your food through those hot and cool spots.</span></li>
-     <li><span class="k">CTA</span><span>Join the conversation on Qoneqt.</span></li>
+     <li><span class="k">Closing line</span><span>Join the conversation on Qoneqt.</span></li>
     </ol>
    </div>
   </div>
@@ -535,44 +536,45 @@ li[data-s=bad] .ic::after{transform:rotate(-45deg)}
 <section class="mk ink" aria-labelledby="qg-h"><div class="wrap">
  <div class="label mk-r">04 · THE QUALITY GATE</div>
  <h2 class="lp-h2 mk-r" id="qg-h">Nothing ships until it passes.</h2>
- <p class="qg-sub mk-r">Every video is probed before it is marked ready. A fail comes with a reason, not a shrug.</p>
+ <p class="qg-sub mk-r">Every video is checked before it is marked ready. If a check fails, the job shows which one.</p>
  <div class="qg" data-fx="glow">
   <ul class="ck mk-ck">
    <li style="--i:0"><span class="ck-t"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#A68B5B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>File is not empty</li>
-   <li style="--i:1"><span class="ck-t"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#A68B5B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Video stream present</li>
+   <li style="--i:1"><span class="ck-t"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#A68B5B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Video track present</li>
    <li style="--i:2"><span class="ck-t"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#A68B5B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>9:16 aspect ratio</li>
-   <li style="--i:3"><span class="ck-t"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#A68B5B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>1080 by 1920 resolution</li>
+   <li style="--i:3"><span class="ck-t"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#A68B5B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>1080 × 1920 resolution</li>
    <li style="--i:4"><span class="ck-t"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#A68B5B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Audio track present</li>
    <li style="--i:5"><span class="ck-t"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#A68B5B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Duration between 8 and 90 seconds</li>
-   <li style="--i:6"><span class="ck-t"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#A68B5B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Scene count in range</li>
+   <li style="--i:6"><span class="ck-t"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#A68B5B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Scene count between 3 and 8</li>
   </ul>
   <div class="big mk-r"><span class="cnt" data-count="7">7</span><small>checks</small></div>
  </div>
 </div></section>
 
 <section class="mk" aria-labelledby="tp-h"><div class="wrap">
- <div class="label mk-r">05 · BUILT FOR LOOPS</div>
- <h2 class="lp-h2 mk-r" id="tp-h">Pick a topic. Make a loop.</h2>
- <div class="label mk-r tp-lab">Example hooks</div>
+ <div class="label mk-r">05 · EXAMPLE TOPICS</div>
+ <h2 class="lp-h2 mk-r" id="tp-h">Need an idea? Start with one of these.</h2>
+ <div class="label mk-r tp-lab">Hover to preview the hook. Click to use the topic.</div>
  <div class="tpg mk-r">
   <button type="button" class="tp" data-fx="pixel" data-tp="AI and Computer Science"><span data-px-face><span class="label">01</span><b>AI and Computer Science</b></span><span class="h" data-px-reveal>You do not need a GPU to ship your first model.</span></button>
   <button type="button" class="tp" data-fx="pixel" data-tp="Physics"><span data-px-face><span class="label">02</span><b>Physics</b></span><span class="h" data-px-reveal>Your microwave is a lesson in standing waves.</span></button>
-  <button type="button" class="tp" data-fx="pixel" data-tp="College Admissions"><span data-px-face><span class="label">03</span><b>College Admissions</b></span><span class="h" data-px-reveal>The essay is not about you. It is about one Tuesday.</span></button>
+  <button type="button" class="tp" data-fx="pixel" data-tp="College Admissions"><span data-px-face><span class="label">03</span><b>College Admissions</b></span><span class="h" data-px-reveal>Your college essay does not need a big story. One ordinary day is enough.</span></button>
   <button type="button" class="tp" data-fx="pixel" data-tp="Startups"><span data-px-face><span class="label">04</span><b>Startups</b></span><span class="h" data-px-reveal>Your first ten users will not come from ads.</span></button>
-  <button type="button" class="tp" data-fx="pixel" data-tp="Robotics"><span data-px-face><span class="label">05</span><b>Robotics</b></span><span class="h" data-px-reveal>Build your first arm out of cardboard. Seriously.</span></button>
+  <button type="button" class="tp" data-fx="pixel" data-tp="Robotics"><span data-px-face><span class="label">05</span><b>Robotics</b></span><span class="h" data-px-reveal>Build your first robot arm out of cardboard.</span></button>
  </div>
 </div></section>
 
 <section class="mk" aria-labelledby="ft-h"><div class="wrap">
- <div class="label mk-r">06 · BATCH MODE + FEATURES</div>
- <h2 class="lp-h2 mk-r" id="ft-h">Make ten while you make coffee.</h2>
+ <div class="label mk-r">06 · FEATURES</div>
+ <h2 class="lp-h2 mk-r" id="ft-h">Need more than one video? Queue a batch.</h2>
  <div class="mk-g6">
-  <article class="card dk mk-r mk-f"><div class="label">Batch mode</div><div class="big2"><span class="cnt" data-count="25">25</span></div><p>topics in one batch</p></article>
-  <article class="card mk-r mk-f"><h3>Structured Story Engine</h3><p>The scene plan is schema-validated, so every stage gets typed, predictable input.</p></article>
-  <article class="card mk-r mk-f"><h3>Resilient Generation</h3><p>Retries and fallbacks per scene. One failed call degrades a scene, not the whole video.</p></article>
-  <article class="card mk-r mk-f"><h3>Auto-synced Captions</h3><p>Word-level timing drives on-screen captions, so videos work on mute.</p></article>
-  <article class="card mk-r mk-f"><h3>Quality Gate</h3><p>Seven checks before anything is marked ready.</p></article>
-  <article class="card mk-r mk-f"><h3>Batch Mode</h3><p>Queue many topics and let the workers run unattended.</p></article>
+  <article class="card dk mk-r mk-f"><div class="label">Batch mode</div><div class="big2"><span class="cnt" data-count="25">25</span></div><p>topics per batch</p></article>
+  <article class="card mk-r mk-f"><h3>Structured Story Engine</h3><p>Every script becomes a validated scene plan, so each stage gets clean, predictable input.</p></article>
+  <article class="card mk-r mk-f"><h3>Resilient Generation</h3><p>Each scene retries on its own. If one still fails, the rest of the video still finishes.</p></article>
+  <article class="card mk-r mk-f"><h3>Auto-synced Captions</h3><p>Captions follow the voiceover word by word, so videos still work on mute.</p></article>
+  <article class="card mk-r mk-f"><h3>Batch Mode</h3><p>Queue many topics and let them render in the background.</p></article>
+  <article class="card mk-r mk-f"><h3>Undo Window</h3><p>A short countdown lets you edit the topic or cancel before anything is generated.</p></article>
+  <article class="card mk-r mk-f"><h3>Publish Pack</h3><p>Every video comes with a title, caption and hashtags you can copy in one click.</p></article>
  </div>
 </div></section>
 
@@ -583,7 +585,7 @@ li[data-s=bad] .ic::after{transform:rotate(-45deg)}
 
 <section class="mk ink mk-cta" data-fx="glow" aria-labelledby="cta2-h"><div class="wrap">
  <h2 class="lp-h2 mk-r" id="cta2-h">Your next post is one topic away.</h2>
- <div class="cta-row mk-r"><a class="lp-btn" href="#/create" id="mkGo">Light the furnace</a><a class="mk-tl" href="#/jobs">See finished videos</a></div>
+ <div class="cta-row mk-r"><a class="lp-btn" href="#/create" id="mkGo">Make your first video</a><a class="mk-tl" href="#/jobs">View your videos</a></div>
 </div></section>
 </div>
 
@@ -596,8 +598,7 @@ li[data-s=bad] .ic::after{transform:rotate(-45deg)}
 </section>
 
 <section class="card" data-fx="glow" aria-labelledby="gen-h">
- <div class="label">01 · Create</div>
- <h2 id="gen-h">Generate a video</h2>
+ <div class="label" id="gen-h">01 · Create</div>
  <div class="row">
   <div class="field grow"><label for="topic">Topic</label><input id="topic" placeholder="Topic, idea or trend (e.g. 5 study habits that actually work)"></div>
   <div class="field narrow scn"><label for="scenes">Scenes</label>
@@ -616,7 +617,8 @@ li[data-s=bad] .ic::after{transform:rotate(-45deg)}
   <div class="field"><label for="topics">Batch topics <span style="color:var(--muted);font-weight:400">· one per line</span></label><textarea id="topics" placeholder="One topic per line"></textarea></div>
   <div class="actions"><button class="btn ghost" onclick="batch()">Queue batch</button></div>
  </div>
- <small class="meta" id="h"></small>
+ <small class="meta" id="h" style="display:none"></small>
+ <script>if(/debug/.test(location.search+location.hash))document.getElementById('h').style.display=''</script>
 </section>
 
 <section class="pipe" aria-labelledby="pipe-h">
