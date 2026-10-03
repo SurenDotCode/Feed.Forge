@@ -148,7 +148,7 @@ footer{color:var(--muted);font-size:12px;padding:24px 0 48px}
  .actions .btn:not(.text){flex:1 1 auto}
 }
 /* landing (lp-*) */
-html{scroll-behavior:smooth}
+html{scroll-behavior:auto;scroll-padding-top:90px}
 #app,#how,#jobs-h{scroll-margin-top:72px}
 .skip{position:absolute;left:12px;top:-60px;z-index:50;background:var(--gold);color:var(--gold-ink);padding:10px 16px;border-radius:8px;font-weight:600;text-decoration:none}
 .skip:focus{top:12px}
@@ -212,6 +212,26 @@ html{scroll-behavior:smooth}
  .pn-links a[aria-current="true"]{background:rgba(247,246,243,.14)}
  .pn:not(.open) .pn-links{opacity:0;transform:translateY(-8px);visibility:hidden;pointer-events:none}
 }
+/* views + transitions */
+[data-view][hidden]{display:none!important}
+.pre-create #view-home{display:none}.pre-create #view-create{display:block}
+[tabindex="-1"]:focus{outline:none}
+.pn{view-transition-name:nav}
+html.navbusy body{pointer-events:none}html.navbusy{overflow-x:clip}
+@keyframes vt-out-l{to{transform:translateX(-14vw);opacity:0}}
+@keyframes vt-in-r{from{transform:translateX(14vw);opacity:0}}
+@keyframes vt-out-r{to{transform:translateX(14vw);opacity:0}}
+@keyframes vt-in-l{from{transform:translateX(-14vw);opacity:0}}
+::view-transition-old(root),::view-transition-new(root){animation-duration:600ms;animation-timing-function:cubic-bezier(.22,1,.36,1);animation-fill-mode:both;mix-blend-mode:normal}
+html[data-dir=forward]::view-transition-old(root){animation-name:vt-out-l}
+html[data-dir=forward]::view-transition-new(root){animation-name:vt-in-r}
+html[data-dir=back]::view-transition-old(root){animation-name:vt-out-r}
+html[data-dir=back]::view-transition-new(root){animation-name:vt-in-l}
+::view-transition-old(nav){display:none}::view-transition-new(nav){animation:none}
+.vx-out-f{animation:vt-out-l 250ms cubic-bezier(.22,1,.36,1) both}.vx-in-f{animation:vt-in-r 400ms cubic-bezier(.22,1,.36,1) both}
+.vx-out-b{animation:vt-out-r 250ms cubic-bezier(.22,1,.36,1) both}.vx-in-b{animation:vt-in-l 400ms cubic-bezier(.22,1,.36,1) both}
+footer.wrap{padding:24px 24px 48px}
+@media(max-width:760px){footer.wrap{padding-left:16px;padding-right:16px}}
 /* gooey controls (goo only on decorative blob layers) */
 .vh{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0!important}
 .row .narrow.scn{flex:0 1 250px}
@@ -408,25 +428,26 @@ li[data-s=bad] .ic::after{transform:rotate(-45deg)}
  .mk-f:hover,.tp:hover,.tp:focus-visible,.js .mk-r.in.mk-f:hover{transform:none!important}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
-</style><script>document.documentElement.classList.add('js')</script></head><body>
+</style><script>document.documentElement.classList.add('js');if(/^#\/(create|jobs)$/.test(location.hash))document.documentElement.classList.add('pre-create')</script></head><body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><filter id="goo" x="-50%" y="-150%" width="200%" height="400%"><feGaussianBlur in="SourceGraphic" stdDeviation="8" result="b"/><feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="g"/><feComposite in="SourceGraphic" in2="g" operator="atop"/></filter></defs></svg>
-<a class="skip" href="#app">Skip to app</a>
+<a class="skip" href="#/create">Skip to app</a>
 <div class="net" id="net" role="alert" hidden>Can't reach the server. Retrying...</div>
 
 <nav class="pn" id="lpNav" aria-label="Primary">
- <a class="pn-mark" href="#hero">FEEDFORGE</a>
- <div class="pn-links" id="pnLinks"><span class="pn-hl" aria-hidden="true"></span><a href="#how">How it works</a><a href="#app">Create</a><a href="#jobs-h">Jobs</a></div>
- <a class="pn-cta" href="#app">Start creating</a>
+ <a class="pn-mark" href="#/">FEEDFORGE</a>
+ <div class="pn-links" id="pnLinks"><span class="pn-hl" aria-hidden="true"></span><a href="#/how">How it works</a><a href="#/create">Create</a><a href="#/jobs">Jobs</a></div>
+ <a class="pn-cta" href="#/create">Start creating</a>
  <button class="pn-ico" id="bgToggle" type="button" aria-pressed="false" aria-label="Toggle animated background" title="Toggle animated background"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="3"/><circle cx="8" cy="8" r="6.5" stroke-dasharray="2 2.6"/></svg></button>
  <button class="pn-menu" id="pnMenu" type="button" aria-expanded="false" aria-controls="pnLinks" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M2 4.5h12M2 8h12M2 11.5h12"/></svg></button>
 </nav>
 
+<div id="view-home" data-view="home">
 <section id="hero" aria-labelledby="lp-h1"><div class="lp-in">
  <div class="lp-copy">
   <div class="lp-lab">QONEQT GLOBAL FEED · AI VIDEO PIPELINE</div>
   <h1 class="lp-h1" id="lp-h1">One topic in. One publish-ready video out.</h1>
   <p class="lp-sub">Type an idea and get a scripted, voiced, validated vertical video with caption and hashtags, ready to post.</p>
-  <div class="lp-cta-row"><a class="lp-btn" href="#app">Start creating</a><a class="lp-btn ghost" href="#how">See how it works</a></div>
+  <div class="lp-cta-row"><a class="lp-btn" href="#/create">Start creating</a><a class="lp-btn ghost" href="#/how">See how it works</a></div>
  </div>
 </div></section>
 
@@ -547,9 +568,11 @@ li[data-s=bad] .ic::after{transform:rotate(-45deg)}
 
 <section class="mk ink mk-cta" aria-labelledby="cta2-h"><div class="wrap">
  <h2 class="lp-h2 mk-r" id="cta2-h">Your next post is one topic away.</h2>
- <div class="cta-row mk-r"><a class="lp-btn" href="#app" id="mkGo">Light the furnace</a><a class="mk-tl" href="#jobs-h">See finished videos</a></div>
+ <div class="cta-row mk-r"><a class="lp-btn" href="#/create" id="mkGo">Light the furnace</a><a class="mk-tl" href="#/jobs">See finished videos</a></div>
 </div></section>
+</div>
 
+<div id="view-create" data-view="create" hidden>
 <main class="wrap" id="app">
 <section class="hero">
  <div class="label">Qoneqt Global Feed · 9:16 video pipeline</div>
@@ -599,8 +622,9 @@ li[data-s=bad] .ic::after{transform:rotate(-45deg)}
  <div class="section-head"><div class="label" id="gal-h">04 · Demo gallery</div></div>
  <div class="gal" id="galGrid"></div>
 </section>
-<footer>FeedForge · Team Optimus · CTRL FREAK 2026</footer>
 </main>
+</div>
+<footer class="wrap">FeedForge · Team Optimus · CTRL FREAK 2026</footer>
 
 <script>
 const $=id=>document.getElementById(id);
@@ -623,7 +647,7 @@ document.addEventListener('click',e=>{
   copyText(k==='all'?[p.title,p.caption,tg].filter(Boolean).join('\n\n'):k==='tags'?tg:(p[k]||''),c);return}
  const x=e.target.closest('[data-topic]');if(x){$('topic').value=x.dataset.topic;$('topic').focus();return}
  const g=e.target.closest('[data-goto]');
- if(g){const n=NODES[g.dataset.goto];if(n){n.el.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth',block:'start'});n.el.tabIndex=-1;n.el.focus({preventScroll:true})}}});
+ if(g){const n=NODES[g.dataset.goto];if(n){window.ffScroll&&window.ffScroll(n.el);n.el.tabIndex=-1;n.el.focus({preventScroll:true})}}});
 function made(j){let v=j.created_at??j.created;
  if(v!=null){const d=typeof v==='number'?new Date(v<1e12?v*1000:v):new Date(v);if(!isNaN(d))return d}
  if(!FIRST[j.id]){FIRST[j.id]=Date.now()-(+j.elapsed_s||0)*1000;try{localStorage.setItem('ff_first',JSON.stringify(FIRST))}catch(e){}}
@@ -794,33 +818,37 @@ load();setInterval(load,2500);
  if('IntersectionObserver' in window){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});rv.forEach(el=>io.observe(el))}
  else rv.forEach(el=>el.classList.add('in'));
  /* hero shader background */
- const hero=$('hero'),bg=$('bgToggle');let fx=null,anim=false,seq=0;
- function mount(){const n=++seq;anim=true;bg.setAttribute('aria-pressed','true');
+ const hero=$('hero'),bg=$('bgToggle');let fx=null,anim=false,seq=0,hold=false;
+ function mount(){const n=++seq;anim=true;hold=false;bg.setAttribute('aria-pressed','true');
+  if($('view-home').hidden){hold=true;return}
   import('/static/hero-shader.js').then(m=>{const o=m.mountHero(hero);if(n===seq&&anim)fx=o;else if(o&&o.destroy)o.destroy()}).catch(()=>{})}
- function unmount(){seq++;anim=false;bg.setAttribute('aria-pressed','false');if(fx&&fx.destroy)fx.destroy();fx=null}
+ function unmount(){seq++;anim=false;hold=false;bg.setAttribute('aria-pressed','false');if(fx&&fx.destroy)fx.destroy();fx=null}
  bg.addEventListener('click',()=>anim?unmount():mount());
  const idle=window.requestIdleCallback?(f=>requestIdleCallback(f,{timeout:300})):(f=>setTimeout(f,300));idle(mount);
+ /* pause the shader while the home view is hidden */
+ addEventListener('ffview',e=>{const h=e.detail.view==='home';
+  if(!h&&anim&&!hold){hold=true;seq++;if(fx&&fx.destroy)fx.destroy();fx=null}else if(h&&hold)mount()});
  /* pill nav */
  const box=$('pnLinks'),hl=box.querySelector('.pn-hl'),links=[...box.querySelectorAll('a')],mb=$('pnMenu'),mob=matchMedia('(max-width:700px)');
- const secs=links.map(a=>a.getAttribute('href')==='#jobs-h'?$('jobs-h').closest('section'):document.querySelector(a.getAttribute('href')));
+ const secs=[$('how'),$('app'),$('jobs-h').closest('section')];
  let active=null,placed=false;
  function place(a,instant){if(!a||mob.matches){hl.style.opacity='0';return}
   const snap=!placed||instant;if(snap)hl.style.transition='none';
   hl.style.setProperty('--x',a.offsetLeft+'px');hl.style.setProperty('--w',a.offsetWidth+'px');hl.style.opacity='1';
   if(snap){void hl.offsetWidth;hl.style.transition=''}placed=true}
  const vis=new Set();
- function setActive(){let pick=null;for(let i=links.length-1;i>=0;i--)if(secs[i]&&vis.has(secs[i])){pick=links[i];break}
+ function setActive(){let pick=null;for(let i=links.length-1;i>=0;i--)if(secs[i]&&vis.has(secs[i])&&!secs[i].closest('[data-view]').hidden){pick=links[i];break}
   active=pick;links.forEach(l=>l===pick?l.setAttribute('aria-current','true'):l.removeAttribute('aria-current'));
   if(!box.matches(':hover,:focus-within'))place(active)}
  if('IntersectionObserver' in window){const io=new IntersectionObserver(es=>{es.forEach(e=>e.isIntersecting?vis.add(e.target):vis.delete(e.target));setActive()},{rootMargin:'-40% 0px -55% 0px'});secs.forEach(s=>s&&io.observe(s))}
  function closeMenu(f){nav.classList.remove('open');mb.setAttribute('aria-expanded','false');if(f)mb.focus()}
  links.forEach(a=>{a.addEventListener('pointerenter',()=>place(a));a.addEventListener('focus',()=>place(a));
-  a.addEventListener('click',e=>{const t=document.querySelector(a.getAttribute('href'));if(!t)return;e.preventDefault();t.scrollIntoView({behavior:rm.matches?'auto':'smooth',block:'start'});closeMenu()})});
+  a.addEventListener('click',()=>closeMenu())});
  box.addEventListener('pointerleave',()=>place(active));
  box.addEventListener('focusout',e=>{if(!box.contains(e.relatedTarget))place(active)});
  mb.addEventListener('click',()=>{const o=nav.classList.toggle('open');mb.setAttribute('aria-expanded',o)});
  addEventListener('keydown',e=>{if(e.key==='Escape'&&nav.classList.contains('open'))closeMenu(true)});
- const re=()=>place(active,true);addEventListener('resize',re);if(document.fonts)document.fonts.ready.then(re);
+ const re=()=>place(active,true);addEventListener('resize',re);addEventListener('ffview',()=>{closeMenu();setActive();re()});if(document.fonts)document.fonts.ready.then(re);
  /* scenes segmented control (hidden select stays the source of truth) */
  const sel=$('scenes'),seg=$('segScenes'),opts=[...seg.querySelectorAll('[role=radio]')],sg=seg.querySelector('.seg-goo');
  function paint(){const i=Math.max(0,opts.findIndex(o=>o.dataset.v===sel.value));sg.style.setProperty('--i',i);opts.forEach((o,k)=>{o.setAttribute('aria-checked',k===i);o.tabIndex=k===i?0:-1})}
@@ -875,10 +903,68 @@ load();setInterval(load,2500);
   else if(k==='pp'){ppVis=on;if(on)ppUpd();else if(e.boundingClientRect.top<0)ppSet(1)}
   else if(on)io.unobserve(el)}),{threshold:.15});els.forEach(el=>io.observe(el))}
  /* CTAs that fill or focus the topic input (never submit) */
- function go(topic){const t=$('topic');if(topic!=null)t.value=topic;$('app').scrollIntoView({behavior:rm?'auto':'smooth',block:'start'});t.focus({preventScroll:true})}
+ async function go(topic){const t=$('topic');if(topic!=null)t.value=topic;await window.ffNav.go('/create');t.focus({preventScroll:true})}
  document.addEventListener('click',e=>{
   const b=e.target.closest('.tp');if(b){go(b.dataset.tp);return}
   if(e.target.closest('#tryReal')){go(TOPICS[cur]);return}
   if(e.target.closest('#mkGo')){e.preventDefault();go()}});
 })();
-</script></body></html>
+</script>
+<script type="module">
+/* routing: two views (home, create), eased in-page scroll, slide transition */
+(()=>{
+ const $=id=>document.getElementById(id),html=document.documentElement,RM=()=>matchMedia('(prefers-reduced-motion:reduce)').matches;
+ /* eased scroll */
+ let sRaf=0;const stop=()=>{if(sRaf){cancelAnimationFrame(sRaf);sRaf=0}};
+ ['wheel','touchstart','mousedown','keydown'].forEach(ev=>addEventListener(ev,stop,{passive:true}));
+ function scrollY2(target){stop();target=Math.max(0,target);if(RM()||Math.abs(target-scrollY)<2){scrollTo(0,target);return}
+  const y0=scrollY,d=target-y0,t0=performance.now();
+  const f=n=>{const p=Math.min(1,(n-t0)/700),e=p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;scrollTo(0,y0+d*e);sRaf=p<1?requestAnimationFrame(f):0};sRaf=requestAnimationFrame(f)}
+ window.ffScroll=(el,off=90)=>scrollY2(el.getBoundingClientRect().top+scrollY-off);
+ /* routes */
+ const ROUTES={'/':'home','/how':'home','/create':'create','/jobs':'create'},ORDER={home:0,create:1},
+  TITLE={home:'FeedForge | Home',create:'FeedForge | Create'},
+  views={home:$('view-home'),create:$('view-create')},
+  HEAD={home:()=>$('lp-h1'),create:()=>document.querySelector('#app .hero h1')};
+ let cur=null,busy=false,waiters=[];
+ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+ function parse(){const h=location.hash.replace(/^#/,'');
+  if(h===''||ROUTES[h])return{path:h||'/',view:ROUTES[h||'/']};
+  history.replaceState(null,'','#/');return{path:'/',view:'home'}}
+ function swap(to){const from=cur;
+  if(from&&from!==to)views[from].querySelectorAll('video').forEach(v=>v.pause());
+  html.classList.remove('pre-create');
+  for(const k in views)views[k].hidden=k!==to;
+  scrollTo(0,0);cur=to;document.title=TITLE[to];
+  const h=HEAD[to]();if(h){h.tabIndex=-1;h.focus({preventScroll:true})}
+  dispatchEvent(new CustomEvent('ffview',{detail:{view:to}}))}
+ function after(p){
+  if(p==='/jobs')window.ffScroll($('jobs-h').closest('section'));
+  else if(p==='/how')window.ffScroll($('how'));
+  else if(cur&&scrollY>2)scrollY2(0)}
+ async function apply(){
+  if(busy)return;
+  const r=parse(),to=r.view;
+  if(to===cur){after(r.path);flush();return}
+  busy=true;html.classList.add('navbusy');
+  try{
+   if(cur===null||RM())swap(to);
+   else{const d=ORDER[to]>ORDER[cur]?'forward':'back',o=views[cur],n=views[to];html.dataset.dir=d;
+    if(document.startViewTransition){try{await document.startViewTransition(()=>swap(to)).finished}catch(e){if(cur!==to)swap(to)}}
+    else{const k=d==='forward'?'f':'b';o.classList.add('vx-out-'+k);await sleep(250);swap(to);o.classList.remove('vx-out-'+k);
+     n.classList.add('vx-in-'+k);await sleep(400);n.classList.remove('vx-in-'+k)}}
+  }finally{busy=false;html.classList.remove('navbusy')}
+  const r2=parse();
+  if(r2.path!==r.path){apply();return}
+  after(r.path);flush()}
+ function flush(){waiters.splice(0).forEach(f=>f())}
+ function go(path){return new Promise(res=>{waiters.push(res);if(parse().path===path)apply();else location.hash='#'+path})}
+ window.ffNav={go};
+ addEventListener('hashchange',apply);
+ document.addEventListener('click',e=>{const a=e.target.closest('a[href^="#/"]');
+  if(!a||e.defaultPrevented||e.button||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
+  e.preventDefault();go(a.getAttribute('href').slice(1))});
+ apply();
+})();
+</script>
+</body></html>
