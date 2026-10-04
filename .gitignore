@@ -1,5 +1,27 @@
+# secrets
 .env
+.env.*
+!.env.example
+
+# dependencies / build
+node_modules
+dist/
+
+# runtime data (rendered videos, job state)
+server/data/
 data/
+
+# generated at deploy time by scripts/write-config.mjs
+public/config.js
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.vercel
+
+# Python leftovers
+venv/
 __pycache__/
 *.pyc
-venv/

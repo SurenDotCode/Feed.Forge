@@ -1,0 +1,63 @@
+{
+  "name": "feedforge",
+  "version": "1.0.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "dev": "tsx --env-file-if-exists=.env src/feedforge/server.ts",
+    "start": "tsx --env-file-if-exists=.env src/feedforge/server.ts",
+    "smoke": "tsx --env-file-if-exists=.env src/feedforge/server.ts --mock",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "prefetch": "tsx src/feedforge/prefetch.ts"
+  },
+  "devDependencies": {
+    "@remotion/bundler": "4.0.441",
+    "@remotion/cli": "4.0.441",
+    "@remotion/player": "4.0.441",
+    "@remotion/renderer": "4.0.441",
+    "@types/node": "^25.5.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "remotion": "4.0.441",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "^3.0.66",
+    "@ai-sdk/google": "^3.0.58",
+    "@ai-sdk/openai": "^3.0.50",
+    "@ai-sdk/openai-compatible": "^2.0.41",
+    "@anthropic-ai/sdk": "^0.80.0",
+    "@fal-ai/client": "^1.9.5",
+    "@fastify/cors": "^11.2.0",
+    "@fastify/static": "^9.0.0",
+    "@fontsource/inter": "5.3.0",
+    "@fontsource/merriweather": "5.3.0",
+    "@fontsource/montserrat": "5.3.0",
+    "@fontsource/oswald": "5.3.0",
+    "@fontsource/playfair-display": "5.3.0",
+    "@fontsource/space-grotesk": "5.3.0",
+    "@google/genai": "^1.47.0",
+    "@huggingface/transformers": "^4.0.1",
+    "@mastra/core": "^1.21.0",
+    "@openrouter/ai-sdk-provider": "^2.5.1",
+    "@remotion/google-fonts": "4.0.441",
+    "@remotion/transitions": "4.0.441",
+    "@tavily/ai-sdk": "^0.4.1",
+    "ai": "^6.0.145",
+    "commander": "^14.0.3",
+    "fastify": "^5.8.4",
+    "kokoro-js": "^1.2.1",
+    "openai": "^6.33.0",
+    "p-limit": "^7.3.0",
+    "wavefile": "^11.0.0",
+    "zod": "^4.3.6"
+  },
+  "private": true
+}

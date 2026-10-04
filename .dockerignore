@@ -1,0 +1,7 @@
+.git
+**/node_modules
+**/.env
+server/data
+data
+public/config.js
+.vercel
