@@ -895,17 +895,12 @@ function buildPipelineWorkflow(
 
       // Optional: point Remotion at a pre-installed Chrome Headless Shell
       const browserExecutable = process.env["REMOTION_BROWSER_EXECUTABLE"] || undefined;
-      const chromiumOptions = {
-        enableMultiProcessOnLinux: false,
-        gl: "swangle" as const,
-      };
 
       const composition = await selectComposition({
         serveUrl: bundled,
         browserExecutable,
         id: "FeedForgeVideo",
         inputProps: compositionProps as unknown as Record<string, unknown>,
-        chromiumOptions,
       });
 
       assemblyResult.videoPath = path.join(runDir, "final.mp4");
@@ -921,12 +916,13 @@ function buildPipelineWorkflow(
         serveUrl: bundled,
         browserExecutable,
         codec: "h264",
+        x264Preset: "ultrafast",
+        crf: 26,
         outputLocation: assemblyResult.videoPath,
         inputProps: compositionProps as unknown as Record<string, unknown>,
         concurrency,
         disallowParallelEncoding: true,
         offthreadVideoThreads: 1,
-        chromiumOptions,
       });
 
       const dur = (Date.now() - start) / 1000;
