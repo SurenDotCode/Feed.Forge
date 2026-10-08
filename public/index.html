@@ -644,16 +644,19 @@ li[data-s=bad] .ic::after{transform:rotate(-45deg)}
 </div>
 <footer class="wrap">FeedForge · Team Optimus · CTRL FREAK 2026</footer>
 
+<script src="/config.js"></script>
 <script>
 const $=id=>document.getElementById(id);
+const API_BASE=(window.FEEDFORGE_API_URL||'').replace(/\/+$/,'');
+const apiUrl=p=>!p||p.startsWith('http://')||p.startsWith('https://')?p:(API_BASE+(p.startsWith('/')?p:'/'+p));
 const STAGES=['script','generate','compose','validate'];
 function say(t){$('msg').textContent=t||''}
 function toggleBatch(){const b=$('bt'),open=b.hidden;b.hidden=!open;$('btToggle').setAttribute('aria-expanded',open);if(open)$('topics').focus()}
 async function one(){const t=$('topic').value.trim();if(t.length<3){say('Enter a topic of at least 3 characters.');$('topic').focus();return}say('');
- const s=$('scenes').value;await fetch('/api/jobs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({topic:t,scenes:s?+s:null})});load()}
+ const s=$('scenes').value;await fetch(apiUrl('/api/jobs'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({topic:t,scenes:s?+s:null})});load()}
 async function batch(){const ts=$('topics').value.split('\n').map(x=>x.trim()).filter(x=>x.length>=3);
  if(!ts.length){say('Add at least one topic (3+ characters) per line.');return}say('');
- await fetch('/api/batch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({topics:ts})});load()}
+ await fetch(apiUrl('/api/batch'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({topics:ts})});load()}
 let CACHE={},OFFLINE=false,LAST=[],FIRST={};
 try{FIRST=JSON.parse(localStorage.getItem('ff_first')||'{}')}catch(e){}
 function copyText(t,btn){const done=()=>{if(!btn)return;if(!btn.dataset.o)btn.dataset.o=btn.textContent;btn.textContent='Copied';clearTimeout(btn._t);btn._t=setTimeout(()=>{btn.textContent=btn.dataset.o;delete btn.dataset.o},1500)};
@@ -750,9 +753,9 @@ function updateCard(n,j){n.j=j;
   if(first||RM())n.ct.textContent=lbl;
   else{n.ct.style.opacity=0;clearTimeout(n.cx);n.cx=setTimeout(()=>{n.ct.textContent=lbl;n.ct.style.opacity=1},180)}}
  setT(n.em,j.error||'No error details were returned.');
- if(j.video_url){let v=n.v;
-  if(!v){v=n.v=document.createElement('video');v.controls=true;v.playsInline=true;v.preload='metadata';v.setAttribute('aria-label','Video for '+j.topic);v.src=j.video_url;n.med.appendChild(v);n.fr.classList.add('hasv')}
-  else if(v.getAttribute('src')!==j.video_url)v.src=j.video_url}
+ if(j.video_url){let v=n.v,vu=apiUrl(j.video_url);
+  if(!v){v=n.v=document.createElement('video');v.controls=true;v.playsInline=true;v.preload='metadata';v.setAttribute('aria-label','Video for '+j.topic);v.src=vu;n.med.appendChild(v);n.fr.classList.add('hasv')}
+  else if(v.getAttribute('src')!==vu)v.src=vu}
 
  // thought line
  const run=j.status==='running'&&!OFFLINE;
@@ -790,7 +793,7 @@ function updateCard(n,j){n.j=j;
    <div class="prow"><div class="prow-h"><div class="label">Caption</div><button class="btn ghost sm" data-copy="caption" data-id="${id}">Copy</button></div><p class="cap">${esc(pp.caption)}</p></div>
    <div class="prow"><div class="prow-h"><div class="label">Hashtags</div><button class="btn ghost sm" data-copy="tags" data-id="${id}">Copy</button></div><p class="tags">${esc((pp.hashtags||[]).join(' '))}</p></div>
   </div>
-  <div class="actions">${j.video_url?`<a class="btn" href="${esc(j.video_url)}" download>Download MP4</a>`:''}<button class="btn ghost" data-copy="all" data-id="${id}">Copy all</button><span data-ffa-actions></span></div>`:'')
+  <div class="actions">${j.video_url?`<a class="btn" href="${esc(apiUrl(j.video_url))}" download>Download MP4</a>`:''}<button class="btn ghost" data-copy="all" data-id="${id}">Copy all</button><span data-ffa-actions></span></div>`:'')
  if(window.FFActions){FFActions.mountJobExtras(n.ex,j);const fa=n.jpack.querySelector('[data-ffa-actions]');if(fa)FFActions.mountJobActions(fa,j)}}
 
 function pipeline(jobs){if(OFFLINE){document.querySelectorAll('#steps .step').forEach(el=>{el.className='step';el.removeAttribute('aria-current')});$('pipeNow').textContent='Server unreachable';return}
@@ -802,14 +805,14 @@ function pipeline(jobs){if(OFFLINE){document.querySelectorAll('#steps .step').fo
  $('pipeNow').innerHTML=a?`Tracking <b>${esc(a.topic)}</b> · ${esc(a.status)}`:'No active job'}
 
 async function load(){let jobs;
- try{const res=await fetch('/api/jobs');if(!res.ok)throw 0;jobs=(await res.json()).jobs;if(!Array.isArray(jobs))throw 0;OFFLINE=false;LAST=jobs}
+ try{const res=await fetch(apiUrl('/api/jobs'));if(!res.ok)throw 0;jobs=(await res.json()).jobs;if(!Array.isArray(jobs))throw 0;OFFLINE=false;LAST=jobs}
  catch(e){OFFLINE=true;jobs=LAST}
  $('net').hidden=!OFFLINE;
  render(jobs)}
 function galTiles(d){if(!window.FFActions)return;const gg=$('galGrid');d.forEach(j=>{const t=[...gg.children].find(x=>x.dataset.jobId===String(j.id)),sp=t&&t.querySelector('[data-ffa-tile]');if(sp)FFActions.mountTileActions(sp,j)})}
 function gallery(jobs){const d=jobs.filter(j=>j.status==='done'&&j.video_url).slice(0,6),g=$('gal'),sig=JSON.stringify(d.map(j=>[j.id,j.video_url,j.topic]));
  g.hidden=!d.length;if(g.dataset.sig===sig){galTiles(d);return}g.dataset.sig=sig;
- $('galGrid').innerHTML=d.map(j=>`<article class="card" data-job-id="${esc(j.id)}"><video muted playsinline preload="metadata" tabindex="-1" aria-hidden="true" src="${esc(j.video_url)}#t=0.1"></video><h4>${esc((j.publish_pack&&j.publish_pack.title)||j.topic)}</h4><button class="btn ghost sm" data-goto="${esc(j.id)}" aria-label="Play ${esc(j.topic)}">Play</button><span data-ffa-tile></span></article>`).join('');galTiles(d)}
+ $('galGrid').innerHTML=d.map(j=>`<article class="card" data-job-id="${esc(j.id)}"><video muted playsinline preload="metadata" tabindex="-1" aria-hidden="true" src="${esc(apiUrl(j.video_url))}#t=0.1"></video><h4>${esc((j.publish_pack&&j.publish_pack.title)||j.topic)}</h4><button class="btn ghost sm" data-goto="${esc(j.id)}" aria-label="Play ${esc(j.topic)}">Play</button><span data-ffa-tile></span></article>`).join('');galTiles(d)}
 function render(jobs){
  if(window.FFActions)jobs=jobs.filter(j=>!FFActions.isHidden(j.id));
  jobs.forEach(j=>{if(j.publish_pack)CACHE[j.id]=j.publish_pack});
@@ -838,7 +841,7 @@ document.addEventListener('ff:job-deleted',e=>{const id=String(e.detail&&e.detai
  if(NODES[id]){NODES[id].el.remove();delete NODES[id]}
  const g=$('galGrid');[...g.children].forEach(t=>{if(t.dataset.jobId===id)t.remove()});$('gal').dataset.sig='';
  render(LAST)});
-fetch('/health').then(r=>r.json()).then(h=>$('h').textContent=`LLM: ${h.llm} · images: ${h.image_provider} · workers: ${h.workers}${h.mock?' · MOCK MODE':''}`);
+fetch(apiUrl('/health')).then(r=>r.json()).then(h=>$('h').textContent=`LLM: ${h.llm} · images: ${h.image_provider} · workers: ${h.workers}${h.mock?' · MOCK MODE':''}`);
 load();setInterval(load,2500);
 </script>
 <script type="module">

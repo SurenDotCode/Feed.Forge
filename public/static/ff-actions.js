@@ -11,7 +11,8 @@ const HIDE_KEY = 'ff-hidden-jobs';
 const hidden = (() => { try { return new Set(JSON.parse(localStorage.getItem(HIDE_KEY) || '[]')); } catch (e) { return new Set(); } })();
 const saveHidden = () => { try { localStorage.setItem(HIDE_KEY, JSON.stringify([...hidden])); } catch (e) {} };
 const reduce = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
-const abs = (u) => new URL(u, location.origin).href;
+const apiOrigin = () => (window.FEEDFORGE_API_URL || location.origin).replace(/\/+$/, '');
+const abs = (u) => (!u ? '' : (u.startsWith('http://') || u.startsWith('https://')) ? u : new URL(u.startsWith('/') ? u : '/' + u, apiOrigin() + '/').href);
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const nodesFor = (id) => [...document.querySelectorAll('[data-job-id="' + CSS.escape(id) + '"]')];
 const hasVideo = (j) => !!j.video_url;
@@ -45,7 +46,7 @@ export function deleteJob(job) {
   const commit = async () => {
     if (settled) return; settled = true; pending.delete(id);
     try {
-      const r = await fetch('/api/jobs/' + encodeURIComponent(id), { method: 'DELETE', keepalive: true });
+      const r = await fetch(abs('/api/jobs/' + encodeURIComponent(id)), { method: 'DELETE', keepalive: true });
       if (r.ok || r.status === 404) gone();
       else if (r.status === 405) { hidden.add(id); saveHidden(); gone(); toast('Removed from this view. Server-side delete is not available yet.', { ms: 5000 }); }
       else if (r.status === 409) { nodes.forEach((n) => n.removeAttribute('hidden')); toast('That video is still running. Try again when it finishes.', { ms: 5000 }); }
