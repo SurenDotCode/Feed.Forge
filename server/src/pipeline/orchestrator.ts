@@ -905,6 +905,7 @@ function buildPipelineWorkflow(
 
       assemblyResult.videoPath = path.join(runDir, "final.mp4");
       const concurrency = Math.max(1, Number(process.env["REMOTION_CONCURRENCY"] || 1));
+      const scale = Number(process.env["REMOTION_SCALE"] || (2 / 3));
       await renderMedia({
         composition: {
           ...composition,
@@ -918,6 +919,7 @@ function buildPipelineWorkflow(
         codec: "h264",
         x264Preset: "ultrafast",
         crf: 26,
+        scale,
         outputLocation: assemblyResult.videoPath,
         inputProps: compositionProps as unknown as Record<string, unknown>,
         concurrency,

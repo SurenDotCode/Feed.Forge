@@ -13,6 +13,7 @@ ENV ONNXRUNTIME_NODE_INSTALL_CUDA=skip \
     NODE_ENV=production \
     NODE_OPTIONS="--max-old-space-size=768" \
     REMOTION_CONCURRENCY=1 \
+    REMOTION_SCALE=0.6666667 \
     HOST=0.0.0.0 \
     PORT=7860 \
     FEEDFORGE_DATA_DIR=/data \
@@ -33,5 +34,5 @@ RUN mkdir -p /data && chown -R node:node /app /data
 USER node
 
 EXPOSE 7860
-HEALTHCHECK --interval=30s --timeout=5s --start-period=40s CMD curl -fsS "http://localhost:${PORT}/health" || exit 1
+HEALTHCHECK --interval=60s --timeout=15s --start-period=60s --retries=5 CMD curl -fsS "http://localhost:${PORT}/health" || exit 1
 CMD ["npx", "tsx", "src/feedforge/server.ts"]
