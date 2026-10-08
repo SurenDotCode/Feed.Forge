@@ -11,6 +11,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 ENV ONNXRUNTIME_NODE_INSTALL_CUDA=skip \
     NODE_ENV=production \
+    NODE_OPTIONS="--max-old-space-size=768" \
+    REMOTION_CONCURRENCY=1 \
     HOST=0.0.0.0 \
     PORT=7860 \
     FEEDFORGE_DATA_DIR=/data \

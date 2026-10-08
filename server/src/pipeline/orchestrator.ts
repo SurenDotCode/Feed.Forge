@@ -895,15 +895,21 @@ function buildPipelineWorkflow(
 
       // Optional: point Remotion at a pre-installed Chrome Headless Shell
       const browserExecutable = process.env["REMOTION_BROWSER_EXECUTABLE"] || undefined;
+      const chromiumOptions = {
+        enableMultiProcessOnLinux: false,
+        gl: "swangle" as const,
+      };
 
       const composition = await selectComposition({
         serveUrl: bundled,
         browserExecutable,
         id: "FeedForgeVideo",
         inputProps: compositionProps as unknown as Record<string, unknown>,
+        chromiumOptions,
       });
 
       assemblyResult.videoPath = path.join(runDir, "final.mp4");
+      const concurrency = Math.max(1, Number(process.env["REMOTION_CONCURRENCY"] || 1));
       await renderMedia({
         composition: {
           ...composition,
@@ -917,6 +923,10 @@ function buildPipelineWorkflow(
         codec: "h264",
         outputLocation: assemblyResult.videoPath,
         inputProps: compositionProps as unknown as Record<string, unknown>,
+        concurrency,
+        disallowParallelEncoding: true,
+        offthreadVideoThreads: 1,
+        chromiumOptions,
       });
 
       const dur = (Date.now() - start) / 1000;

@@ -17,6 +17,8 @@ services:
         value: estimate
       - key: FEEDFORGE_WORKERS
         value: "1"
+      - key: REMOTION_CONCURRENCY
+        value: "1"
       - key: FEEDFORGE_ALLOWED_ORIGINS
         value: "*"
       - key: FEEDFORGE_LLM_MODEL
