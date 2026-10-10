@@ -439,7 +439,7 @@ li[data-s=bad] .ic::after{transform:rotate(-45deg)}
  .mk-f:hover,.tp:hover,.tp:focus-visible,.js .mk-r.in.mk-f:hover{transform:none!important}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
-</style><script>document.documentElement.classList.add('js');if(/^#\/(create|jobs)$/.test(location.hash))document.documentElement.classList.add('pre-create')</script></head><body>
+</style><script src="/config.js"></script><script>document.documentElement.classList.add('js');if(/^#\/(create|jobs)$/.test(location.hash))document.documentElement.classList.add('pre-create')</script></head><body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><filter id="goo" x="-50%" y="-150%" width="200%" height="400%"><feGaussianBlur in="SourceGraphic" stdDeviation="8" result="b"/><feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="g"/><feComposite in="SourceGraphic" in2="g" operator="atop"/></filter></defs></svg>
 <a class="skip" href="#/create">Skip to app</a>
 <div class="net" id="net" role="alert" hidden>Can't reach the server. Retrying...</div>
@@ -644,10 +644,9 @@ li[data-s=bad] .ic::after{transform:rotate(-45deg)}
 </div>
 <footer class="wrap">FeedForge · Team Optimus · CTRL FREAK 2026</footer>
 
-<script src="/config.js"></script>
 <script>
 const $=id=>document.getElementById(id);
-const API_BASE=(window.FEEDFORGE_API_URL||'').replace(/\/+$/,'');
+const API_BASE=(window.FEEDFORGE_API_URL||(location.hostname.endsWith('vercel.app')?'https://feedforge-api-production.up.railway.app':'')).replace(/\/+$/,'');
 const apiUrl=p=>!p||p.startsWith('http://')||p.startsWith('https://')?p:(API_BASE+(p.startsWith('/')?p:'/'+p));
 const STAGES=['script','generate','compose','validate'];
 function say(t){$('msg').textContent=t||''}

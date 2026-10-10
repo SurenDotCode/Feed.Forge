@@ -2,16 +2,8 @@
 // Set FEEDFORGE_API_URL in Vercel → Project → Settings → Environment Variables.
 import { writeFileSync } from "node:fs";
 
-const raw = (process.env.FEEDFORGE_API_URL || "").trim().replace(/\/+$/, "");
-
-if (!raw) {
-  console.error(
-    "\n✗ FEEDFORGE_API_URL is not set.\n" +
-      "  Add it in Vercel → Settings → Environment Variables, e.g.\n" +
-      "  FEEDFORGE_API_URL = https://your-backend-host.example.com\n",
-  );
-  process.exit(1);
-}
+const defaultBackend = "https://feedforge-api-production.up.railway.app";
+const raw = (process.env.FEEDFORGE_API_URL || defaultBackend).trim().replace(/\/+$/, "");
 
 let parsed;
 try {

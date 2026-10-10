@@ -66,8 +66,12 @@ export async function validateVideo(
       if (duration == null || duration < 5 || duration > maxDuration) {
         errors.push(`duration ${duration ?? "?"}s outside 5-${maxDuration}s`);
       }
-      if (width !== expected.width || height !== expected.height) {
-        errors.push(`video is ${width}x${height}, expected ${expected.width}x${expected.height}`);
+      const is9x16 = !!width && !!height && Math.abs(width / height - 9 / 16) < 0.02;
+      const matchesResolution =
+        (width === expected.width && height === expected.height) ||
+        (is9x16 && width !== null && width >= 540 && height !== null && height >= 960);
+      if (!matchesResolution) {
+        errors.push(`video is ${width}x${height}, expected 9:16 vertical resolution (${expected.width}x${expected.height})`);
       }
       if (!hasAudio) errors.push("audio stream missing");
     } catch (err) {
@@ -77,11 +81,15 @@ export async function validateVideo(
 
   const exists = sizeMb !== null;
   const maxDuration = expected.maxDuration + 15;
+  const is9x16 = !!width && !!height && Math.abs(width / height - 9 / 16) < 0.02;
+  const matchesResolution =
+    (width === expected.width && height === expected.height) ||
+    (is9x16 && width !== null && width >= 540 && height !== null && height >= 960);
   const checks: Record<string, boolean> = {
     file_not_empty: exists && (sizeMb ?? 0) * 1_048_576 >= 50_000,
     video_stream: width !== null && height !== null,
-    aspect_9_16: !!width && !!height && Math.abs(width / height - 9 / 16) < 0.01,
-    [`resolution_${expected.width}x${expected.height}`]: width === expected.width && height === expected.height,
+    aspect_9_16: is9x16,
+    [`resolution_${expected.width}x${expected.height}`]: matchesResolution,
     audio_present: hasAudio,
     [`duration_5_to_${maxDuration}s`]: duration !== null && duration >= 5 && duration <= maxDuration,
     scene_count_ok: sceneCount >= 3 && sceneCount <= 16,
