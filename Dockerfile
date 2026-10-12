@@ -11,7 +11,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 ENV ONNXRUNTIME_NODE_INSTALL_CUDA=skip \
     NODE_ENV=production \
-    NODE_OPTIONS="--max-old-space-size=256" \
     REMOTION_CONCURRENCY=1 \
     REMOTION_SCALE=0.5 \
     HOST=0.0.0.0 \
@@ -32,6 +31,8 @@ COPY public/ /app/public/
 # Run as the non-root "node" user (uid 1000, required by Hugging Face Spaces)
 RUN mkdir -p /data && chown -R node:node /app /data
 USER node
+
+ENV NODE_OPTIONS="--max-old-space-size=256"
 
 EXPOSE 7860
 HEALTHCHECK --interval=60s --timeout=15s --start-period=60s --retries=5 CMD curl -fsS "http://localhost:${PORT}/health" || exit 1
