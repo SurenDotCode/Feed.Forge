@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 ENV ONNXRUNTIME_NODE_INSTALL_CUDA=skip \
     NODE_ENV=production \
-    NODE_OPTIONS="--max-old-space-size=384" \
+    NODE_OPTIONS="--max-old-space-size=256" \
     REMOTION_CONCURRENCY=1 \
     REMOTION_SCALE=0.5 \
     HOST=0.0.0.0 \

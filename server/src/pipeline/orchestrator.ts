@@ -906,14 +906,16 @@ function buildPipelineWorkflow(
       assemblyResult.videoPath = path.join(runDir, "final.mp4");
       const concurrency = Math.max(1, Number(process.env["REMOTION_CONCURRENCY"] || 1));
       const scale = Number(process.env["REMOTION_SCALE"] || 0.5);
+      const targetWidth = Math.round(platformConfig.width * scale);
+      const targetHeight = Math.round(platformConfig.height * scale);
       if (typeof (global as { gc?: () => void }).gc === "function") {
         try { (global as { gc?: () => void }).gc!(); } catch { /* ignore */ }
       }
       await renderMedia({
         composition: {
           ...composition,
-          width: platformConfig.width,
-          height: platformConfig.height,
+          width: targetWidth,
+          height: targetHeight,
           fps: platformConfig.fps,
           durationInFrames: totalFrames,
         },
@@ -921,17 +923,25 @@ function buildPipelineWorkflow(
         browserExecutable,
         codec: "h264",
         imageFormat: "jpeg",
-        jpegQuality: 80,
+        jpegQuality: 75,
         x264Preset: "ultrafast",
         crf: 28,
-        scale,
+        scale: 1,
         outputLocation: assemblyResult.videoPath,
         inputProps: compositionProps as unknown as Record<string, unknown>,
         concurrency,
         disallowParallelEncoding: true,
         offthreadVideoThreads: 1,
+        offthreadVideoCacheSizeInBytes: 16 * 1024 * 1024,
+        mediaCacheSizeInBytes: 16 * 1024 * 1024,
         chromiumOptions: {
-          enableMultiProcessOnLinux: false,
+          enableMultiProcessOnLinux: true,
+          gl: "swangle",
+        },
+        ffmpegOverride: ({ args }) => {
+          const copy = [...args];
+          copy.splice(Math.max(0, copy.length - 1), 0, "-threads", "1");
+          return copy;
         },
       });
 

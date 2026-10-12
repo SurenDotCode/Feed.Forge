@@ -430,7 +430,10 @@ async function execute(job: StoredJob): Promise<void> {
       } else if (type === "bundling") {
         log(job, "Bundling video composition…");
       } else if (type === "rendering") {
-        log(job, `Rendering ${data["totalFrames"]} frames at ${platform.width}x${platform.height}…`);
+        const scale = Number(process.env["REMOTION_SCALE"] || 0.5);
+        const w = Math.round(platform.width * scale);
+        const h = Math.round(platform.height * scale);
+        log(job, `Rendering ${data["totalFrames"]} frames at ${w}x${h}…`);
       } else {
         return; // high-frequency events: no disk write
       }
