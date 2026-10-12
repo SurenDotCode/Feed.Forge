@@ -905,7 +905,10 @@ function buildPipelineWorkflow(
 
       assemblyResult.videoPath = path.join(runDir, "final.mp4");
       const concurrency = Math.max(1, Number(process.env["REMOTION_CONCURRENCY"] || 1));
-      const scale = Number(process.env["REMOTION_SCALE"] || (2 / 3));
+      const scale = Number(process.env["REMOTION_SCALE"] || 0.5);
+      if (typeof (global as { gc?: () => void }).gc === "function") {
+        try { (global as { gc?: () => void }).gc!(); } catch { /* ignore */ }
+      }
       await renderMedia({
         composition: {
           ...composition,
@@ -917,14 +920,19 @@ function buildPipelineWorkflow(
         serveUrl: bundled,
         browserExecutable,
         codec: "h264",
+        imageFormat: "jpeg",
+        jpegQuality: 80,
         x264Preset: "ultrafast",
-        crf: 26,
+        crf: 28,
         scale,
         outputLocation: assemblyResult.videoPath,
         inputProps: compositionProps as unknown as Record<string, unknown>,
         concurrency,
         disallowParallelEncoding: true,
         offthreadVideoThreads: 1,
+        chromiumOptions: {
+          enableMultiProcessOnLinux: false,
+        },
       });
 
       const dur = (Date.now() - start) / 1000;

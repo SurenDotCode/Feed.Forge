@@ -20,7 +20,7 @@ services:
       - key: REMOTION_CONCURRENCY
         value: "1"
       - key: REMOTION_SCALE
-        value: "0.6666667"
+        value: "0.5"
       - key: FEEDFORGE_ALLOWED_ORIGINS
         value: "*"
       - key: FEEDFORGE_LLM_MODEL

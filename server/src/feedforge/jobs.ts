@@ -528,7 +528,7 @@ async function execute(job: StoredJob): Promise<void> {
     log(job, "Running quality gate (ffprobe)…");
     save(job);
     const score = finalScore as DirectorScore | null;
-    const scale = Number(process.env["REMOTION_SCALE"] || (2 / 3));
+    const scale = Number(process.env["REMOTION_SCALE"] || 0.5);
     const targetWidth = Math.round(platform.width * scale);
     const targetHeight = Math.round(platform.height * scale);
     const quality = await validateVideo(finalPath, score?.scenes.length ?? 0, job.critic_score, {

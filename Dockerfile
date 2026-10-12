@@ -11,9 +11,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 ENV ONNXRUNTIME_NODE_INSTALL_CUDA=skip \
     NODE_ENV=production \
-    NODE_OPTIONS="--max-old-space-size=768" \
+    NODE_OPTIONS="--max-old-space-size=384" \
     REMOTION_CONCURRENCY=1 \
-    REMOTION_SCALE=0.6666667 \
+    REMOTION_SCALE=0.5 \
     HOST=0.0.0.0 \
     PORT=7860 \
     FEEDFORGE_DATA_DIR=/data \
@@ -35,4 +35,4 @@ USER node
 
 EXPOSE 7860
 HEALTHCHECK --interval=60s --timeout=15s --start-period=60s --retries=5 CMD curl -fsS "http://localhost:${PORT}/health" || exit 1
-CMD ["npx", "tsx", "src/feedforge/server.ts"]
+CMD ["npx", "tsx", "--expose-gc", "src/feedforge/server.ts"]
