@@ -887,9 +887,17 @@ function buildPipelineWorkflow(
       const remotionEntry = path.join(process.cwd(), "src", "remotion", "index.ts");
       const bundled = await bundle({
         entryPoint: remotionEntry,
-        webpackOverride: (config: object) => config,
+        webpackOverride: (config: object) => ({
+          ...config,
+          devtool: false,
+        }),
         publicDir,
+        enableCaching: true,
       });
+
+      if (typeof (global as { gc?: () => void }).gc === "function") {
+        try { (global as { gc?: () => void }).gc!(); } catch { /* ignore */ }
+      }
 
       cb.onProgress?.("assembly", { type: "rendering", totalFrames });
 

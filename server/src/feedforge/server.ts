@@ -67,7 +67,7 @@ app.get("/health", async () => {
   const configured = settings.mock || !!settings.googleKey;
   return {
     ok: true,
-    version: "1.0.3-scale540",
+    version: "1.0.4-devtool-false",
     llm: settings.mock ? "Mock" : configured ? "Gemini" : "not configured",
     image_provider: settings.mock ? "Mock" : configured ? "Gemini" : "not configured",
     tts: settings.mock ? "Mock" : configured ? "Gemini TTS" : "not configured",

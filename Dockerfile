@@ -32,7 +32,7 @@ COPY public/ /app/public/
 RUN mkdir -p /data && chown -R node:node /app /data
 USER node
 
-ENV NODE_OPTIONS="--max-old-space-size=256"
+ENV NODE_OPTIONS="--max-old-space-size=384"
 
 EXPOSE 7860
 HEALTHCHECK --interval=60s --timeout=15s --start-period=60s --retries=5 CMD curl -fsS "http://localhost:${PORT}/health" || exit 1
