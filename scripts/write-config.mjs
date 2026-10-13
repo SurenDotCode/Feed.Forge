@@ -3,7 +3,10 @@
 import { writeFileSync } from "node:fs";
 
 const defaultBackend = "https://suggestions-animation-long-remembered.trycloudflare.com";
-const raw = (process.env.FEEDFORGE_API_URL || defaultBackend).trim().replace(/\/+$/, "");
+let raw = (process.env.FEEDFORGE_API_URL || defaultBackend).trim().replace(/\/+$/, "");
+if (raw.includes("railway.app")) {
+  raw = defaultBackend;
+}
 
 let parsed;
 try {
