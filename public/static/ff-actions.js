@@ -11,7 +11,7 @@ const HIDE_KEY = 'ff-hidden-jobs';
 const hidden = (() => { try { return new Set(JSON.parse(localStorage.getItem(HIDE_KEY) || '[]')); } catch (e) { return new Set(); } })();
 const saveHidden = () => { try { localStorage.setItem(HIDE_KEY, JSON.stringify([...hidden])); } catch (e) {} };
 const reduce = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
-const apiOrigin = () => (window.FEEDFORGE_API_URL || (location.hostname.endsWith('vercel.app') ? 'https://feedforge-api-production.up.railway.app' : location.origin)).replace(/\/+$/, '');
+const apiOrigin = () => (localStorage.getItem('feedforge_api_url') || window.FEEDFORGE_API_URL || 'https://suggestions-animation-long-remembered.trycloudflare.com').replace(/\/+$/, '');
 const abs = (u) => (!u ? '' : (u.startsWith('http://') || u.startsWith('https://')) ? u : new URL(u.startsWith('/') ? u : '/' + u, apiOrigin() + '/').href);
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const nodesFor = (id) => [...document.querySelectorAll('[data-job-id="' + CSS.escape(id) + '"]')];

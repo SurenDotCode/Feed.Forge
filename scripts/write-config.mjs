@@ -2,7 +2,7 @@
 // Set FEEDFORGE_API_URL in Vercel → Project → Settings → Environment Variables.
 import { writeFileSync } from "node:fs";
 
-const defaultBackend = "https://feedforge-api-production.up.railway.app";
+const defaultBackend = "https://suggestions-animation-long-remembered.trycloudflare.com";
 const raw = (process.env.FEEDFORGE_API_URL || defaultBackend).trim().replace(/\/+$/, "");
 
 let parsed;

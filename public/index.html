@@ -646,7 +646,7 @@ li[data-s=bad] .ic::after{transform:rotate(-45deg)}
 
 <script>
 const $=id=>document.getElementById(id);
-const API_BASE=(window.FEEDFORGE_API_URL||(location.hostname.endsWith('vercel.app')?'https://feedforge-api-production.up.railway.app':'')).replace(/\/+$/,'');
+const API_BASE=(localStorage.getItem('feedforge_api_url')||window.FEEDFORGE_API_URL||'https://suggestions-animation-long-remembered.trycloudflare.com').replace(/\/+$/,'');
 const apiUrl=p=>!p||p.startsWith('http://')||p.startsWith('https://')?p:(API_BASE+(p.startsWith('/')?p:'/'+p));
 const STAGES=['script','generate','compose','validate'];
 function say(t){$('msg').textContent=t||''}

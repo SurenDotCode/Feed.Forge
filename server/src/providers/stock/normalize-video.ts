@@ -19,11 +19,13 @@ export async function normalizeStockVideo(src: string, dest: string, maxSeconds 
       "ffmpeg",
       [
         "-y", "-v", "error",
+        "-threads", "1",
         "-i", src,
         "-t", String(maxSeconds),
         "-an",
-        "-vf", "fps=30,scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,format=yuv420p",
-        "-c:v", "libx264", "-preset", "veryfast", "-crf", "23",
+        "-vf", "fps=30,scale=540:960:force_original_aspect_ratio=increase,crop=540:960,format=yuv420p",
+        "-c:v", "libx264", "-preset", "ultrafast", "-crf", "28",
+        "-threads", "1",
         "-movflags", "+faststart",
         tmp,
       ],
@@ -42,6 +44,9 @@ export async function normalizeStockVideo(src: string, dest: string, maxSeconds 
     const duration = frames > 0 ? frames / fps : 0;
     if (duration < 0.5) throw new Error(`clip too short (${frames} frames)`);
     fs.renameSync(tmp, dest);
+    if (typeof (global as { gc?: () => void }).gc === "function") {
+      try { (global as { gc?: () => void }).gc!(); } catch { /* ignore */ }
+    }
     return Math.floor(duration * 100) / 100;
   } catch (err) {
     console.warn(`[stock] Could not prepare video clip ${src}: ${err instanceof Error ? err.message : String(err)}`);

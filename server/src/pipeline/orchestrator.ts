@@ -707,28 +707,30 @@ function buildPipelineWorkflow(
         return first && last ? last.end - first.start + 0.5 : 3;
       });
 
-      // Run visual asset resolution and music generation in parallel
-      const scenePromise = Promise.all(
-        score.scenes.map(async (scene, i) => {
-          try {
-            const sceneDuration = sceneDurations[i];
-            return await resolveVisualAsset(scene, i, totalScenes, assetsDir, opts, archetype, cb, sceneDuration);
-          } catch (err) {
-            cb.onProgress?.("visuals", { type: "asset_failed", scene: i, error: String(err) });
-            return { path: null, usage: null, durationSeconds: null } as VisualAssetResult;
-          }
-        }),
-      );
+      // Run visual asset resolution sequentially to prevent memory surges
+      const sceneResults: VisualAssetResult[] = [];
+      for (let i = 0; i < score.scenes.length; i++) {
+        const scene = score.scenes[i]!;
+        try {
+          const sceneDuration = sceneDurations[i];
+          const res = await resolveVisualAsset(scene, i, totalScenes, assetsDir, opts, archetype, cb, sceneDuration);
+          sceneResults.push(res);
+        } catch (err) {
+          cb.onProgress?.("visuals", { type: "asset_failed", scene: i, error: String(err) });
+          sceneResults.push({ path: null, usage: null, durationSeconds: null } as VisualAssetResult);
+        }
+        if (typeof (global as { gc?: () => void }).gc === "function") {
+          try { (global as { gc?: () => void }).gc!(); } catch { /* ignore */ }
+        }
+      }
 
-      const musicPromise = resolveMusic(score, sceneDurations, {
+      const musicResult = await resolveMusic(score, sceneDurations, {
         musicProvider: opts.musicProvider!,
         musicProviderKey: opts.musicProviderKey ?? "bundled",
         llm: opts.llm,
         noMusic: opts.noMusic,
         callbacks: cb,
       });
-
-      const [sceneResults, musicResult] = await Promise.all([scenePromise, musicPromise]);
 
       visualsResult.sceneAssets = sceneResults.map((r) => r.path);
       visualsResult.sceneSourceDurations = sceneResults.map((r) => r.durationSeconds);
