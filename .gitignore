@@ -12,7 +12,7 @@ server/data/
 data/
 
 # generated at deploy time by scripts/write-config.mjs
-public/config.js
+# (tracked so static hosting always has default API endpoint)
 
 # OS / editor
 .DS_Store
