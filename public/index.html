@@ -646,8 +646,14 @@ li[data-s=bad] .ic::after{transform:rotate(-45deg)}
 
 <script>
 const $=id=>document.getElementById(id);
-const API_BASE=(localStorage.getItem('feedforge_api_url')||window.FEEDFORGE_API_URL||'https://suggestions-animation-long-remembered.trycloudflare.com').replace(/\/+$/,'');
-const apiUrl=p=>!p||p.startsWith('http://')||p.startsWith('https://')?p:(API_BASE+(p.startsWith('/')?p:'/'+p));
+const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+let storedApi = localStorage.getItem('feedforge_api_url');
+if (storedApi && (storedApi.includes('suggestions-animation-long-remembered') || (isLocal && storedApi.includes('railway.app')))) {
+  localStorage.removeItem('feedforge_api_url');
+  storedApi = null;
+}
+const API_BASE = (isLocal ? window.location.origin : (storedApi || window.FEEDFORGE_API_URL || window.location.origin)).replace(/\/+$/, '');
+const apiUrl = p => !p || p.startsWith('http://') || p.startsWith('https://') ? p : (API_BASE + (p.startsWith('/') ? p : '/' + p));
 const STAGES=['script','generate','compose','validate'];
 function say(t){$('msg').textContent=t||''}
 function toggleBatch(){const b=$('bt'),open=b.hidden;b.hidden=!open;$('btToggle').setAttribute('aria-expanded',open);if(open)$('topics').focus()}
@@ -853,11 +859,12 @@ function changeBackendUrl(){
 function checkBackend(){
  fetch(apiUrl('/health'),{cache:'no-store'}).then(r=>r.json()).then(h=>{
   const d=$('backendDot'),t=$('backendText');
-  if(d&&t){d.style.background='#22c55e';t.textContent=`Backend: ${h.llm||'Online'}`;}
+  const isLocalHost = API_BASE.includes('localhost') || API_BASE.includes('127.0.0.1');
+  if(d&&t){d.style.background='#22c55e';t.textContent=`Backend: Online (${isLocalHost ? 'Local PC' : 'Remote'} · ${h.llm||'Gemini'})`;}
   if($('h'))$('h').textContent=`LLM: ${h.llm} · images: ${h.image_provider} · workers: ${h.workers}${h.mock?' · MOCK MODE':''}`;
  }).catch(()=>{
   const d=$('backendDot'),t=$('backendText');
-  if(d&&t){d.style.background='#ef4444';t.textContent='Backend: Offline (click to configure)';}
+  if(d&&t){d.style.background='#ef4444';t.textContent=`Backend: Offline (${API_BASE || 'No URL'}) - Click to set URL`;}
  });
 }
 checkBackend();setInterval(checkBackend,8000);

@@ -2,23 +2,19 @@
 // Set FEEDFORGE_API_URL in Vercel → Project → Settings → Environment Variables.
 import { writeFileSync } from "node:fs";
 
-const defaultBackend = "https://suggestions-animation-long-remembered.trycloudflare.com";
-let raw = (process.env.FEEDFORGE_API_URL || defaultBackend).trim().replace(/\/+$/, "");
-if (raw.includes("railway.app")) {
-  raw = defaultBackend;
-}
+let raw = (process.env.FEEDFORGE_API_URL || "").trim().replace(/\/+$/, "");
 
-let parsed;
-try {
-  parsed = new URL(raw);
-} catch {
-  console.error(`\n✗ FEEDFORGE_API_URL is not a valid URL: "${raw}"\n`);
-  process.exit(1);
-}
-if (parsed.protocol !== "https:" && parsed.hostname !== "localhost" && parsed.hostname !== "127.0.0.1") {
-  console.error(`\n✗ FEEDFORGE_API_URL must use https:// (browsers block http APIs on an https site): "${raw}"\n`);
-  process.exit(1);
+if (raw) {
+  try {
+    const parsed = new URL(raw);
+    if (parsed.protocol !== "https:" && parsed.hostname !== "localhost" && parsed.hostname !== "127.0.0.1") {
+      console.warn(`[WARN] FEEDFORGE_API_URL should use https:// on HTTPS sites: "${raw}"`);
+    }
+  } catch {
+    console.error(`✗ Invalid FEEDFORGE_API_URL: "${raw}"`);
+    raw = "";
+  }
 }
 
 writeFileSync("public/config.js", `window.FEEDFORGE_API_URL = ${JSON.stringify(raw)};\n`);
-console.log(`✓ UI will call the backend at ${raw}`);
+console.log(`✓ Config written. Backend URL: ${raw || "(none set - using local/browser origin)"}`);

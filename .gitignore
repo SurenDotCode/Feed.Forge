@@ -6,6 +6,8 @@
 # dependencies / build
 node_modules
 dist/
+server/build/
+.remotion/
 
 # runtime data (rendered videos, job state)
 server/data/

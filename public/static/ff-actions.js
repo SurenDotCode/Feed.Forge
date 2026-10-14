@@ -10,8 +10,15 @@ const cfg = { topicSelector: '', createCardSelector: '', siteName: 'FeedForge', 
 const HIDE_KEY = 'ff-hidden-jobs';
 const hidden = (() => { try { return new Set(JSON.parse(localStorage.getItem(HIDE_KEY) || '[]')); } catch (e) { return new Set(); } })();
 const saveHidden = () => { try { localStorage.setItem(HIDE_KEY, JSON.stringify([...hidden])); } catch (e) {} };
-const reduce = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
-const apiOrigin = () => (localStorage.getItem('feedforge_api_url') || window.FEEDFORGE_API_URL || 'https://suggestions-animation-long-remembered.trycloudflare.com').replace(/\/+$/, '');
+const apiOrigin = () => {
+  if (['localhost', '127.0.0.1'].includes(window.location.hostname)) return window.location.origin;
+  const stored = localStorage.getItem('feedforge_api_url');
+  if (stored && stored.includes('suggestions-animation-long-remembered')) {
+    try { localStorage.removeItem('feedforge_api_url'); } catch (e) {}
+    return (window.FEEDFORGE_API_URL || window.location.origin).replace(/\/+$/, '');
+  }
+  return (stored || window.FEEDFORGE_API_URL || window.location.origin).replace(/\/+$/, '');
+};
 const abs = (u) => (!u ? '' : (u.startsWith('http://') || u.startsWith('https://')) ? u : new URL(u.startsWith('/') ? u : '/' + u, apiOrigin() + '/').href);
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const nodesFor = (id) => [...document.querySelectorAll('[data-job-id="' + CSS.escape(id) + '"]')];

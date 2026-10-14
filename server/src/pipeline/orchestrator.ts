@@ -884,6 +884,10 @@ function buildPipelineWorkflow(
 
       const totalFrames = getTotalDurationInFrames(compositionProps, platformConfig.fps);
 
+      if (typeof (global as { gc?: () => void }).gc === "function") {
+        try { (global as { gc?: () => void }).gc!(); } catch { /* ignore */ }
+      }
+
       cb.onProgress?.("assembly", { type: "bundling" });
 
       const remotionEntry = path.join(process.cwd(), "src", "remotion", "index.ts");
@@ -945,8 +949,10 @@ function buildPipelineWorkflow(
         offthreadVideoCacheSizeInBytes: 16 * 1024 * 1024,
         mediaCacheSizeInBytes: 16 * 1024 * 1024,
         chromiumOptions: {
-          enableMultiProcessOnLinux: true,
+          enableMultiProcessOnLinux: false,
           gl: "swangle",
+          disableWebSecurity: true,
+          ignoreCertificateErrors: true,
         },
         ffmpegOverride: ({ args }) => {
           const copy = [...args];
