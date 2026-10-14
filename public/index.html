@@ -642,7 +642,7 @@ li[data-s=bad] .ic::after{transform:rotate(-45deg)}
 </section>
 </main>
 </div>
-<footer class="wrap">FeedForge · Team Optimus · CTRL FREAK 2026</footer>
+<footer class="wrap">FeedForge · Team Optimus · CTRL FREAK 2026 · <span id="backendDot" style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#eab308;vertical-align:middle;margin:0 4px"></span><span id="backendText">Connecting...</span> (<a href="#" onclick="changeBackendUrl();return false;" style="color:var(--gold);text-decoration:underline">Change Backend URL</a>)</footer>
 
 <script>
 const $=id=>document.getElementById(id);
@@ -840,7 +840,27 @@ document.addEventListener('ff:job-deleted',e=>{const id=String(e.detail&&e.detai
  if(NODES[id]){NODES[id].el.remove();delete NODES[id]}
  const g=$('galGrid');[...g.children].forEach(t=>{if(t.dataset.jobId===id)t.remove()});$('gal').dataset.sig='';
  render(LAST)});
-fetch(apiUrl('/health')).then(r=>r.json()).then(h=>$('h').textContent=`LLM: ${h.llm} · images: ${h.image_provider} · workers: ${h.workers}${h.mock?' · MOCK MODE':''}`);
+function changeBackendUrl(){
+ const cur=localStorage.getItem('feedforge_api_url')||API_BASE;
+ const n=prompt('Enter FeedForge Backend API URL (e.g. your Cloudflare Tunnel URL or http://localhost:7860):',cur);
+ if(n!==null){
+  const clean=n.trim().replace(/\/+$/,'');
+  if(clean)localStorage.setItem('feedforge_api_url',clean);
+  else localStorage.removeItem('feedforge_api_url');
+  location.reload();
+ }
+}
+function checkBackend(){
+ fetch(apiUrl('/health'),{cache:'no-store'}).then(r=>r.json()).then(h=>{
+  const d=$('backendDot'),t=$('backendText');
+  if(d&&t){d.style.background='#22c55e';t.textContent=`Backend: ${h.llm||'Online'}`;}
+  if($('h'))$('h').textContent=`LLM: ${h.llm} · images: ${h.image_provider} · workers: ${h.workers}${h.mock?' · MOCK MODE':''}`;
+ }).catch(()=>{
+  const d=$('backendDot'),t=$('backendText');
+  if(d&&t){d.style.background='#ef4444';t.textContent='Backend: Offline (click to configure)';}
+ });
+}
+checkBackend();setInterval(checkBackend,8000);
 load();setInterval(load,2500);
 </script>
 <script type="module">
